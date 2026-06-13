@@ -51,5 +51,8 @@ class TimingExtension:
         stats = self.get_stats()
         lines = ["=== Timing Stats ==="]
         for name, s in stats.items():
-            lines.append(f"  {name}: {s[\'count\']} calls, avg {s[\'avg_ms\']}ms, total {s[\'total_ms\']}ms")
-        return "\n".join(lines)
+            count = s["count"]
+            avg = s["avg_ms"]
+            total = s["total_ms"]
+            lines.append(f"  {name}: {count} calls, avg {avg}ms, total {total}ms")
+        return "\\n".join(lines)
