@@ -1,18 +1,13 @@
 ---
 name: hera
-description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, ECC patterns (64 agents, autonomous loops, self-debugging), and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), Claude Code/OpenClaude (211.9K), Kilo Code (20K+), GSD Core, RTK, Headroom, and ECC (211.9K)."
-version: 2.4.0
-author: david-aistudio
-license: MIT
+description: "Build production-grade AI coding agents. Complete architecture reference verified from 9 codebases (Pi, Claude Code, ECC, Aider, OpenCode, Kilo Code, GSD, RTK, Headroom) with 770K+ combined GitHub stars. Covers agent loop, tools, sessions, compaction, streaming, hooks, permissions, edit formats, repo map, and every design pattern."
 metadata:
-  hermes:
-    tags: [coding-agent, architecture, agent-loop, extensions, tools, typescript, ai-agent, hera-framework]
-    related_skills: [claude-code, codex, opencode, hermes-agent, agents-md-hierarchy]
-    public_repo: https://github.com/david-aistudio/hera
+  author: david-aistudio
+  version: "2.7.0"
+  license: MIT
 ---
 
 # Hera — AI Coding Agent Architecture Reference
-
 **Hera** is a complete architectural reference for building production-grade AI coding agents. Every detail is verified from the [Pi Agent](https://github.com/earendil-works/pi) source code (62K stars, TypeScript monorepo).
 
 Use this to build your own coding agent, understand how existing agents work internally, or extend them with new capabilities.
