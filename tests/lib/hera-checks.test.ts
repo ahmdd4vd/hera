@@ -209,7 +209,7 @@ describe("hera-checks: quality", () => {
 });
 
 describe("hera-checks: shape contract", () => {
-  it("has all 8 expected categories", () => {
+  it("has all 9 expected categories", () => {
     const expected = [
       "coreArchitecture",
       "messageSystem",
@@ -219,6 +219,7 @@ describe("hera-checks: shape contract", () => {
       "security",
       "streaming",
       "quality",
+      "routing",
     ];
     expect(Object.keys(CHECKS).sort()).toEqual(expected.sort());
   });

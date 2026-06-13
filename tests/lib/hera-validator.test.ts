@@ -114,6 +114,12 @@ describe("validateProject", () => {
       try { return primary; } catch { return fallback; }
       if (cost > budget) return error;
       logger.info('event');
+      // routing
+      interface ApiKey { id: string; key: string; rateLimitedUntil?: string; }
+      rateLimitedUntil: new Date().toISOString();
+      strategy: 'fallback' | 'round-robin';
+      const cooldown = base * 2 ** level;
+      const ERROR_RULES = [{text:'rate limit', backoff:true}];
     `;
     fs.writeFileSync(path.join(tmpDir, "perfect.ts"), code);
 
@@ -122,9 +128,9 @@ describe("validateProject", () => {
     expect(report.issues).toHaveLength(0);
   });
 
-  it("categorizes checks into 8 categories", () => {
+  it("categorizes checks into 9 categories", () => {
     const report = validateProject(tmpDir);
-    expect(report.categories).toHaveLength(8);
+    expect(report.categories).toHaveLength(9);
     const names = report.categories.map((c) => c.category);
     expect(names).toContain("coreArchitecture");
     expect(names).toContain("messageSystem");
@@ -134,6 +140,7 @@ describe("validateProject", () => {
     expect(names).toContain("security");
     expect(names).toContain("streaming");
     expect(names).toContain("quality");
+    expect(names).toContain("routing");
   });
 
   it("flags issues for missing patterns", () => {
