@@ -1,13 +1,14 @@
 ---
 name: hera
 description: "Hera — Complete AI coding agent architecture reference. Build a production-grade coding agent from scratch. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, and every design pattern. Verified from Pi Agent source code (62K stars)."
-version: 1.0.0
+version: 1.3.0
 author: david-aistudio
 license: MIT
 metadata:
   hermes:
-    tags: [coding-agent, architecture, agent-loop, extensions, tools, typescript, ai-agent]
-    related_skills: [claude-code, codex, opencode, hermes-agent]
+    tags: [coding-agent, architecture, agent-loop, extensions, tools, typescript, ai-agent, hera-framework]
+    related_skills: [claude-code, codex, opencode, hermes-agent, agents-md-hierarchy]
+    public_repo: https://github.com/david-aistudio/hera
 ---
 
 # Hera — AI Coding Agent Architecture Reference
@@ -1113,7 +1114,250 @@ Phase 4: Advanced
 
 ---
 
-## 18. FILE REFERENCE
+## 18. MULTI-AGENT KNOWLEDGE (18 Agents Studied)
+
+This section documents patterns extracted from studying 18 AI coding agents — not just Pi. Each agent contributes unique patterns.
+
+### Agent Overview
+
+| Agent | Language | Key Innovation |
+|-------|----------|----------------|
+| **Pi Agent** | TypeScript | Two-loop architecture, tree sessions, extensions |
+| **Aider** | Python | Git-native workflow, edit formats, architect pattern |
+| **OpenCode** | TypeScript | Effect-TS system, plugin architecture, permission events |
+| **OpenClaw** | TypeScript | Agent-harness, branch summarization, multi-platform |
+| **Kilo Code** | TypeScript | Scout mode, reference guidance, VS Code integration |
+| **Claude Code** | Closed | Permission levels (auto/confirm/block), tool sandboxing |
+| **Codex** | Closed | Container sandboxing, cloud execution |
+| **Cursor** | Closed | Context-aware editing, @codebase indexing |
+| **Devin** | Closed | Full coding environment (browser + terminal + editor) |
+| **Kiro** | Closed | Spec-driven development, hooks system |
+
+### Pattern 1: Edit Formats (from Aider)
+
+The LLM outputs EDIT INSTRUCTIONS, not raw code. More precise, less hallucination.
+
+```python
+# Aider supports 7 edit formats:
+# editblock: SEARCH/REPLACE blocks (most popular)
+# wholefile: Write entire file content
+# udiff: Unified diff format
+# patch: Patch format with context
+
+class EditBlockCoder:
+    def apply_edits(self, content: str, edits: list[Edit]) -> str:
+        for edit in edits:
+            if edit.search_text not in content:
+                raise EditNotFound(edit.search_text)
+            content = content.replace(edit.search_text, edit.replace_text, 1)
+        return content
+```
+
+**Why:** Raw LLM output is unreliable. Edit instructions are bounded and precise.
+**Lesson:** Don't let LLM write entire files. Use SEARCH/REPLACE or diff format.
+
+### Pattern 2: Architect Pattern (from Aider)
+
+Separate PLANNING from EXECUTION with two roles.
+
+```python
+# Architect: Plans what to change (high-level reasoning)
+# Editor: Applies the changes (precise code edits)
+
+class ArchitectCoder:
+    system_prompt = """
+    Act as an expert architect engineer.
+    Study the change request and the current code.
+    Describe how to modify the code to complete the request.
+    The editor will rely solely on your instructions.
+    """
+```
+
+**Why:** LLMs are better at planning than precise editing. Separating improves quality.
+**Lesson:** Consider a two-agent pattern: one plans, one executes.
+
+### Pattern 3: Git-Native Workflow (from Aider)
+
+Auto-commit after every edit. Every change is tracked and reversible.
+
+```python
+class Repo:
+    def commit(self, message: str, files: list[str]):
+        for f in files:
+            self.repo.git.add(f)
+        self.repo.index.commit(message)
+```
+
+**Why:** Transparency. User can `git undo` any change.
+**Lesson:** Integrate with version control. Auto-commit. Make every change reversible.
+
+### Pattern 4: Effect-TS Architecture (from OpenCode)
+
+Type-safe, composable operations with dependency injection.
+
+```typescript
+// 764 files use Effect-TS
+// Key: typed errors, dependency injection via Layers, composable operations
+
+export const Permission = {
+  ask: (input: PermissionAskInput): Effect<void, PermissionError> =>
+    Effect.gen(function* () {
+      yield* Event.emit("permission.asked", input)
+      const reply = yield* waitForReply(input.id)
+      if (reply.denied) yield* Effect.fail(new PermissionError(input))
+    }),
+}
+```
+
+**Why:** Type-safe errors, testable code, composable operations.
+**Lesson:** Use typed errors and dependency injection. Don't use raw try/catch everywhere.
+
+### Pattern 5: Agent-Harness Separation (from OpenClaw)
+
+Agent = pure logic (call LLM, execute tools). Harness = orchestration (session, compaction, steering).
+
+```typescript
+class AgentHarness {
+  session: Session
+  compaction: CompactionSystem
+  steering: PendingMessageQueue
+  skills: Skill[]
+  
+  async prompt(text: string, options: StreamOptions) {
+    // 1. Create user message
+    // 2. Run agent loop
+    // 3. Handle compaction if needed
+    // 4. Save to session
+    // 5. Emit events
+  }
+}
+```
+
+**Why:** Separation of concerns. Agent is pure and testable. Harness handles messy orchestration.
+**Lesson:** Separate agent logic from orchestration.
+
+### Pattern 6: Branch Summarization (from OpenClaw)
+
+Summarize conversation branches independently, not just linearly.
+
+```typescript
+async function compact(session: Session, model: Model) {
+  const branches = session.getBranches()
+  for (const branch of branches) {
+    if (branch.age > COMPACTION_THRESHOLD) {
+      const summary = await summarize(branch.messages)
+      branch.replaceWith(summary)
+    }
+  }
+}
+```
+
+**Why:** Tree-based sessions have many branches. Compacting separately preserves more context.
+**Lesson:** If you have branching sessions, compact branches independently.
+
+### Pattern 7: Permission Levels (from Claude Code)
+
+Three levels: AUTO (safe), CONFIRM (ask user), BLOCK (dangerous).
+
+```typescript
+const PERMISSIONS = {
+  "read_file": "auto",      // Safe
+  "write_file": "confirm",  // Needs approval
+  "bash": "confirm",        // Needs approval
+  "delete_file": "block",   // Dangerous
+}
+```
+
+**Why:** Not all tools are equal. Reading is safe. Writing needs approval. Deleting is dangerous.
+**Lesson:** Categorize tools by risk level.
+
+### Pattern 8: Scout Mode (from Kilo Code)
+
+Explore codebase BEFORE making changes. Read many files first, then edit.
+
+```typescript
+const scoutPrompt = `
+Before making any changes, explore the codebase:
+1. Find all files related to the task
+2. Understand the architecture
+3. Identify dependencies
+4. Plan all changes needed
+THEN make the changes.
+`
+```
+
+**Why:** Agents that jump to editing often miss context.
+**Lesson:** Read before writing. Explore before editing.
+
+### Pattern 9: Reference Guidance (from Kilo Code)
+
+Context-aware references injected based on the current task.
+
+```typescript
+interface Reference {
+  name: string
+  content: string
+  trigger: (task: string) => boolean
+}
+```
+
+**Why:** Generic system prompts waste tokens. Targeted references are more useful.
+**Lesson:** Use context-aware references, not one-size-fits-all prompts.
+
+### Pattern 10: Container Sandboxing (from Codex)
+
+Run code in isolated containers. File changes are sandboxed. Network restricted.
+
+```typescript
+interface Sandbox {
+  containerId: string
+  mountPoint: string
+  networkPolicy: "none" | "restricted" | "full"
+  timeout: number
+}
+```
+
+**Why:** Agents running arbitrary code are dangerous.
+**Lesson:** If your agent runs code, sandbox it.
+
+### Decision Framework
+
+```
+Q: What type of agent are you building?
+├── Coding agent
+│   ├── Need precise edits? → Edit Formats (Aider)
+│   ├── Need planning? → Architect Pattern (Aider)
+│   ├── Need git integration? → Git-Native Workflow (Aider)
+│   └── Need safety? → Permission System (Claude Code)
+├── Research agent
+│   ├── Need to explore? → Scout Mode (Kilo Code)
+│   └── Need context-aware help? → Reference Guidance (Kilo Code)
+├── General agent
+│   ├── Need scalability? → Effect-TS (OpenCode)
+│   ├── Need orchestration? → Agent-Harness (OpenClaw)
+│   └── Need branching? → Branch Summarization (OpenClaw)
+└── Production agent
+    ├── Need safety? → Container Sandboxing (Codex)
+    ├── Need permissions? → Permission System (Claude Code)
+    └── Need reliability? → Agent-Harness (OpenClaw)
+```
+
+### Anti-Patterns from 18 Agents
+
+1. **Raw LLM Output** → Use edit instructions (Aider)
+2. **Single Agent Does Everything** → Architect + Editor (Aider)
+3. **No Version Control** → Auto-commit (Aider)
+4. **Untyped Errors** → Typed errors (OpenCode)
+5. **Monolithic Agent** → Agent-Harness separation (OpenClaw)
+6. **Linear Compaction** → Branch-aware compaction (OpenClaw)
+7. **No Permission Levels** → Auto/Confirm/Block (Claude Code)
+8. **Jump to Editing** → Scout mode first (Kilo Code)
+9. **Generic Prompts** → Context-aware references (Kilo Code)
+10. **Unsandboxed Execution** → Container isolation (Codex)
+
+---
+
+## 19. FILE REFERENCE
 
 | File | Purpose | Lines |
 |---|---|---|
@@ -1139,7 +1383,20 @@ Phase 4: Advanced
 
 ---
 
-## 19. COMPARISON WITH OTHER AGENTS
+## 19. HERA FRAMEWORK
+
+The Hera Framework (HERA_FRAMEWORK.md) provides structural organization for agent projects based on AGENTS.md hierarchy. Key concepts:
+
+- **AGENTS.md hierarchy**: Root AGENTS.md is the project-wide contract, child AGENTS.md files own specific domains
+- **Read Before Editing**: Always read the relevant AGENTS.md chain before making changes
+- **Update After Editing**: Update AGENTS.md when changes affect structure, contracts, or workflows
+- **Verification**: Check that changes match the established patterns
+
+See `references/hera-project.md` for project structure and `references/user-preferences.md` for style guidelines.
+
+---
+
+## 20. COMPARISON WITH OTHER AGENTS
 
 | Feature | Hera (Pi) | Claude Code | OpenCode | Cursor | Codex |
 |---|---|---|---|---|---|
@@ -1501,7 +1758,7 @@ See [TESTING.md](TESTING.md) for detailed testing patterns:
 
 ## 28. CLI TOOLS
 
-See `cli/` directory for command-line tools:
+See `cli/` directory in the Hera repo for command-line tools:
 
 | Tool | File | Purpose |
 |---|---|---|
@@ -1527,66 +1784,43 @@ Creates a new project with:
 hera validate ./src
 ```
 
-Validates implementation against 11 categories:
-- Core Architecture
-- Message System
-- Tool System
-- Session System
-- Queue System
-- Compaction
-- Extension System
-- AI Layer
-- System Prompt
-- Error Handling
-- Security
+Validates implementation against 11 categories with 50+ checks. Outputs score (0-100) and pass/fail status.
 
 ---
 
 ## 29. EXAMPLE AGENT
 
-See `examples/full-agent/` for a complete, working agent that demonstrates all patterns:
+See `examples/full-agent/` in the Hera repo for a complete, working agent:
 
 ```
 examples/full-agent/
 ├── src/
-│   ├── agent/          ← Agent loop and agent class
-│   ├── tools/          ← Tool implementations (read, write, bash)
+│   ├── agent/          ← Agent loop, agent class, types
+│   ├── tools/          ← read, write, bash implementations
 │   ├── session/        ← Tree-based session storage
-│   ├── extensions/     ← Extension system (logging, security)
-│   ├── providers/      ← LLM provider (simulated OpenAI)
+│   ├── extensions/     ← logging, security extensions
+│   ├── providers/      ← Simulated OpenAI provider
 │   └── index.ts        ← Entry point
-├── tests/              ← Test suite
-├── AGENTS.md           ← Hera Framework
-├── package.json        ← Dependencies
-└── README.md           ← Documentation
+├── tests/              ← Unit, integration, E2E tests
+├── AGENTS.md           ← Hera Framework contract
+└── package.json
 ```
-
-Features demonstrated:
-- Two-loop agent loop
-- Tree-based session with branching
-- Tool execution (read, write, bash)
-- Extension system (logging, security)
-- Error handling
-- AbortSignal support
 
 ---
 
 ## 30. DEPLOYMENT
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment guides:
-
+See DEPLOYMENT.md in the Hera repo:
 - Local deployment (CLI, background service, systemd)
 - Docker deployment (Dockerfile, docker-compose)
 - Cloud deployment (Railway, Render, Fly.io, AWS Lambda, Vercel)
-- Configuration (env vars, API keys, rate limiting)
-- Monitoring (logging, metrics, error tracking, cost tracking)
-- Scaling (horizontal scaling, session persistence, load balancing)
+- Configuration, monitoring, scaling
 
 ---
 
 ## 31. GITHUB ACTIONS
 
-See `.github/actions/validate/` for CI/CD integration:
+CI/CD integration via `.github/actions/validate/action.yml`:
 
 ```yaml
 - name: Validate Agent
@@ -1595,6 +1829,4 @@ See `.github/actions/validate/` for CI/CD integration:
     directory: './src'
 ```
 
-Outputs:
-- `score`: Validation score (0-100)
-- `passed`: Whether validation passed (score >= 80)
+Outputs: `score` (0-100) and `passed` (true/false)

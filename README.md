@@ -9,11 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/version-1.4.0-blue?style=flat-square" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/version-1.6.0-blue?style=flat-square" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/agents-18+-brightgreen?style=flat-square" alt="Agents"></a>
-  <a href="#"><img src="https://img.shields.io/badge/sections-35-purple?style=flat-square" alt="Sections"></a>
+  <a href="#"><img src="https://img.shields.io/badge/sections-38-purple?style=flat-square" alt="Sections"></a>
   <a href="#"><img src="https://img.shields.io/badge/templates-12-orange?style=flat-square" alt="Templates"></a>
+  <a href="#"><img src="https://img.shields.io/badge/agents_studied-18-brightgreen?style=flat-square" alt="Agents Studied"></a>
   <a href="#"><img src="https://img.shields.io/badge/languages-TypeScript%20%7C%20Python-blueviolet?style=flat-square" alt="Languages"></a>
 </p>
 
