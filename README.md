@@ -77,47 +77,37 @@ Hera is a technical reference document that explains how production-grade AI cod
 
 ---
 
-## Installation (4 ways)
+## Installation (5 ways)
 
-### Way 1: npx (easiest)
+### Way 1: npx skills (recommended)
 
 ```bash
-# Auto-detect your agent
+npx skills add david-aistudio/hera
+```
+
+### Way 2: npx hera-agent
+
+```bash
 npx hera-agent
-
-# Or specify agent
 npx hera-agent claude
-npx hera-agent hermes
-npx hera-agent cursor
-
-# Install for all agents
-npx hera-agent all
 ```
 
-### Way 2: One-liner
+### Way 3: One-liner
 
 ```bash
-# Auto-detect your agent
 curl -sSL https://raw.githubusercontent.com/david-aistudio/hera/main/install.sh | bash
-
-# Or specify agent
-curl -sSL https://raw.githubusercontent.com/david-aistudio/hera/main/install.sh | bash -s -- claude
 ```
 
-### Way 3: Clone and install
+### Way 4: Clone
 
 ```bash
 git clone https://github.com/david-aistudio/hera.git && cd hera
 ./install.sh claude
 ```
 
-### Way 4: Manual
+### Way 5: Manual
 
-Just copy the right file to the right place:
-- **Claude Code**: Copy `CLAUDE.md` to your project root
-- **Hermes**: Copy `SKILL.md` to `~/.hermes/skills/hera/SKILL.md`
-- **Cursor**: Copy `.cursor/rules/hera.mdc` to your project
-- **Others**: Copy `AGENTS.md` to your project root
+Copy the right file to the right place.
 
 ### What the installer does
 
