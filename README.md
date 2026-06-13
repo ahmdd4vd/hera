@@ -14,7 +14,7 @@
   <a href="#"><img src="https://img.shields.io/badge/agents-18+-brightgreen?style=flat-square" alt="Agents"></a>
   <a href="#"><img src="https://img.shields.io/badge/sections-32-purple?style=flat-square" alt="Sections"></a>
   <a href="#"><img src="https://img.shields.io/badge/templates-12-orange?style=flat-square" alt="Templates"></a>
-  <a href="#"><img src="https://img.shields.io/badge/references-5-yellow?style=flat-square" alt="References"></a>
+  <a href="#"><img src="https://img.shields.io/badge/references-8-yellow?style=flat-square" alt="References"></a>
   <a href="#"><img src="https://img.shields.io/badge/repos_studied-9-red?style=flat-square" alt="Repos Studied"></a>
 </p>
 
@@ -41,7 +41,7 @@ cat SKILL.md               # 3282 lines, 32 sections
 - Complete architecture reference (verified from 9 codebases, 770K+ combined stars)
 - 12 code templates (6 TypeScript + 6 Python, copy-paste ready)
 - 2 example agents (TypeScript + Python, full working implementations)
-- 5 reference files (advanced patterns, token optimization, ECC patterns, spec-driven dev, innovation patterns)
+- 8 reference files (advanced patterns, token optimization, ECC patterns, spec-driven dev, innovation patterns, Claude Code architecture, ECC architecture, OpenCode architecture, Kilo Code architecture)
 - Validation checklist (50+ checks)
 - Security, error handling, testing patterns
 - Deployment guide (local, Docker, cloud)
@@ -151,12 +151,16 @@ cd hera
 | 31 | Spec-Driven Development | Pipeline from spec to code with multi-agent orchestration |
 | 32 | Token Optimization | 6 strategies for 60-95% token reduction |
 
-### Reference Files (5 files, 1991 lines)
+### Reference Files (8 files, 38,968 lines)
 
 | File | Lines | Content |
 |---|---|---|
 | `references/advanced-patterns.md` | 911 | 8 production features: MCP, Skills, Memory, Plugins, Cost Tracking, Observability, Hooks, Multi-Modal |
-| `references/ecc-patterns.md` | 400 | From ECC (211.9K stars): agent harness construction, 64 specialized agents, autonomous loops, self-debugging, hooks, benchmarking |
+| `references/claude-code-architecture.md` | 14,279 | Claude Code (OpenClaude) deep analysis: query loop (2240 lines), 50+ tools, 7 permission modes, hook system, streaming tool execution, subagent system |
+| `references/ecc-architecture.md` | 8,990 | ECC plugin deep analysis: 64 specialized agents, 17 hooks, rules per language, 262 skills, continuous learning |
+| `references/opencode-architecture.md` | 8,291 | OpenCode Go agent deep analysis: agent loop (758 lines), 11 providers, 10 tools, permission system, cost tracking |
+| `references/kilocode-architecture.md` | 5,417 | Kilo Code monorepo deep analysis: Agent Manager, auto-generated SDK, gateway pattern, worktree isolation |
+| `references/ecc-patterns.md` | 400 | From ECC: agent harness construction, autonomous loops, self-debugging, hooks, benchmarking |
 | `references/token-optimization.md` | 479 | From RTK + Headroom: 6 compression strategies (command, diff, search, log, live zone, adaptive) |
 | `references/spec-driven-development.md` | 132 | From GSD Core: spec pipeline, multi-agent orchestration, context engineering, state management |
 | `references/innovation-patterns.md` | 69 | From all repos: fast (streaming/parallel/cache/lazy), smart (edit-instructions/fuzzy/architect/linter/scout), not stupid (self-healing/permissions/compaction/errors/auto-commit) |
@@ -253,6 +257,10 @@ hera/
 ├── assets/hera-logo.jpg            Logo
 ├── references/
 │   ├── advanced-patterns.md        8 production features (911 lines)
+│   ├── claude-code-architecture.md Claude Code deep analysis (14,279 lines)
+│   ├── ecc-architecture.md         ECC deep analysis (8,990 lines)
+│   ├── opencode-architecture.md    OpenCode deep analysis (8,291 lines)
+│   ├── kilocode-architecture.md    Kilo Code deep analysis (5,417 lines)
 │   ├── ecc-patterns.md             ECC patterns (400 lines)
 │   ├── token-optimization.md       Token optimization (479 lines)
 │   ├── spec-driven-development.md  Spec-driven dev (132 lines)
@@ -285,8 +293,8 @@ hera/
 | Metric | Value |
 |---|---|
 | SKILL.md | 3282 lines, 32 sections |
-| Reference files | 5 files, 1991 lines |
-| Total content | 15,000+ lines |
+| Reference files | 8 files, 38,968 lines |
+| Total content | 50,000+ lines |
 | Templates | 12 (6 TS + 6 Python) |
 | Example agents | 2 (TypeScript + Python) |
 | Repos studied | 9 (770K+ combined stars) |
