@@ -5,6 +5,33 @@ All notable changes to Hera will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2026-06-13
+
+### Added
+- **Test framework for `examples/full-agent/`** — was previously in `package.json` deps but had no test files
+  - `vitest.config.ts` — same pattern as root
+  - `tests/tools.test.ts` — 14 tests covering all 3 tools (read, write, bash) + tool contract compliance
+  - **Found real security bug**: `read_file` tool doesn't actually sandbox — `path.resolve(cwd, '/etc/passwd')` returns the absolute path and reads it. Test documents the issue with a `KNOWN ISSUE` test case; hera-validate's "Tool execution sandboxed" check correctly flags this.
+- **3 new focused reference files (extracted from SKILL.md)**:
+  - `references/agent-loop-harness.md` (326 lines) — SKILL.md §3–5 (agent loop, Agent class, AgentHarness)
+  - `references/session-and-compaction.md` (131 lines) — SKILL.md §6–7 (session tree, compaction)
+  - `references/ai-providers-layer.md` (484 lines) — SKILL.md §11 (provider abstraction)
+  - SKILL.md reduced from 100KB → 73KB (-26%), 3277 → 2412 lines
+- **1 new architecture reference**: `references/codex-architecture.md` (370 lines)
+  - OpenAI Codex + function-calling patterns, message protocol, streaming, multi-provider compatibility
+  - Documents the M3 dict-vs-string tool args bug fix from commit `934ab8c`
+- **4 new code templates** (12 → 16 total, 8 TS + 8 Python):
+  - `templates/minimal-provider-fallback.ts` (118 lines) — primary/secondary provider with retry + backoff
+  - `templates/minimal-streaming.ts` (102 lines) — AsyncIterable streaming pattern
+  - `templates/python/minimal_provider_fallback.py` (78 lines) — Python equivalent
+  - `templates/python/minimal_streaming.py` (79 lines) — Python equivalent
+
+### Changed
+- **`SKILL.md`** — added "📚 Focused Reference Files" navigation section at top, replaced 6 sections (§3, 4, 5, 6, 7, 11) with single-line pointers
+- **`README.md`** — badges updated: `references-15`, `templates-16`
+- **`AGENTS.md`** — reference files list (10 → 15), new "Code Templates" section
+- **Total test count**: 58 → 72 (+14 from examples/full-agent)
+
 ## [2.8.0] - 2026-06-13
 
 ### Added

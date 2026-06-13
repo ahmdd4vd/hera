@@ -34,14 +34,28 @@ hera/
 └── .kiro/skills/hera/SKILL.md ← Kiro config
 ```
 
-### Reference Files (10 files, ~52K lines)
+### Reference Files (15 files, ~63K lines)
 
 `references/advanced-patterns.md`, `references/claude-code-architecture.md`,
 `references/ecc-architecture.md`, `references/opencode-architecture.md`,
 `references/kilocode-architecture.md`, `references/aider-architecture.md`,
 **`references/hermes-architecture.md`** (Hermes Agent — added 2026-06-13),
 `references/ecc-patterns.md`, `references/token-optimization.md`,
-`references/spec-driven-development.md`, `references/innovation-patterns.md`
+`references/spec-driven-development.md`, `references/innovation-patterns.md`,
+**`references/agent-loop-harness.md`** (SKILL.md §3–5 extracted),
+**`references/session-and-compaction.md`** (SKILL.md §6–7 extracted),
+**`references/ai-providers-layer.md`** (SKILL.md §11 extracted),
+**`references/codex-architecture.md`** (OpenAI Codex — added 2026-06-13)
+
+### Code Templates (16 files, 8 TypeScript + 8 Python)
+
+`templates/minimal-agent-loop.ts`, `templates/minimal-harness.ts`,
+`templates/minimal-session.ts`, `templates/minimal-tool.ts`,
+`templates/minimal-extension.ts`, `templates/minimal-provider.ts`,
+**`templates/minimal-provider-fallback.ts`** (with retry — added 2026-06-13),
+**`templates/minimal-streaming.ts`** (AsyncIterable streaming — added 2026-06-13)
+
+Python equivalents in `templates/python/` (`minimal_agent_loop.py` etc.)
 
 ### Supported Agents
 
