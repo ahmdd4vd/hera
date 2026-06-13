@@ -9,16 +9,17 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/version-2.0.0-blue?style=flat-square" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/version-2.2.0-blue?style=flat-square" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
-  <a href="#"><img src="https://img.shields.io/badge/agents-18+-brightgreen?style=flat-square" alt="Agents"></a>
-  <a href="#"><img src="https://img.shields.io/badge/sections-32-purple?style=flat-square" alt="Sections"></a>
+  <a href="#"><img src="https://img.shields.io/badge/agents_studied-18-brightgreen?style=flat-square" alt="Agents Studied"></a>
+  <a href="#"><img src="https://img.shields.io/badge/sections-33-purple?style=flat-square" alt="Sections"></a>
+  <a href="#"><img src="https://img.shields.io/badge/patterns-21-red?style=flat-square" alt="Patterns"></a>
   <a href="#"><img src="https://img.shields.io/badge/templates-12-orange?style=flat-square" alt="Templates"></a>
   <a href="#"><img src="https://img.shields.io/badge/languages-TypeScript%20%7C%20Python-blueviolet?style=flat-square" alt="Languages"></a>
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick Start</a> · <a href="#what-is-hera">What is Hera</a> · <a href="#installation">Install</a> · <a href="#what-you-learn">What You Learn</a> · <a href="#documentation">Docs</a>
+  <a href="#quick-start">Quick Start</a> · <a href="#what-is-hera">What is Hera</a> · <a href="#installation">Install</a> · <a href="#what-you-learn">What You Learn</a> · <a href="#file-structure">Files</a>
 </p>
 
 ---
@@ -33,8 +34,10 @@ When an AI agent loads Hera's SKILL.md, it suddenly knows:
 - How to make agents fast, smart, and not stupid (13 innovation patterns)
 - How to handle errors, permissions, sessions, tools, providers
 - How to avoid common mistakes (15 anti-patterns with real examples)
+- How to integrate tools via MCP, load skills, manage memory, track costs
+- How to build production features (plugins, hooks, observability, multi-modal)
 
-**Hera is NOT a framework.** It's NOT a CLI tool. It's NOT a competitor to Pi, Aider, or Claude Code.
+**Hera is NOT a framework.** It's NOT a CLI tool. It's NOT a competitor to any agent.
 
 **Hera is KNOWLEDGE** — verified from deep code study of 5 open-source agents and behavioral study of 13 closed-source agents.
 
@@ -88,7 +91,7 @@ cd hera
 
 ## What You Learn
 
-SKILL.md (3100+ lines, 32 sections) teaches:
+SKILL.md (3100+ lines, 33 sections) teaches everything you need to build a production-grade coding agent:
 
 ### Part 1: Fundamentals (from Pi Agent, 62K stars)
 - Agent loop architecture (two-loop design)
@@ -112,32 +115,35 @@ SKILL.md (3100+ lines, 32 sections) teaches:
 - Reference guidance (Kilo Code): context-aware prompts
 
 ### Part 3: Decision Framework (15 decision points)
-Which pattern to use when, with conditions, justification, risks, and mitigation:
-- Edit format selection, agent architecture, git integration
-- Permission levels, context strategy, error handling
-- Streaming, parallel tools, compaction, model selection
-- Sandboxing, session storage, timeouts, retry, logging
+Which pattern to use when, with conditions, justification, risks, and mitigation.
 
 ### Part 4: Anti-Patterns (15 patterns)
-What NOT to do, with real failure examples and solutions:
-- Raw LLM output, single agent, no version control
-- Untyped errors, monolithic agent, linear compaction
-- No permissions, jump to editing, generic prompts
-- Unsandboxed execution, no context budget, blocking tools
+What NOT to do, with real failure examples and solutions.
 
-### Part 5: Innovation Patterns (13 patterns)
+### Part 5: Provider System
+Multi-provider abstraction, custom endpoints, fallback chain, task-based routing.
+
+### Part 6: Innovation Patterns (13 patterns)
 How to make agents fast, smart, and not stupid:
 - **Fast:** Streaming, parallel tools, cache warming, lazy loading
 - **Smart:** Edit instructions, fuzzy match, architect+editor, linter, scout, references
 - **Not stupid:** Self-healing, permissions, branch compaction, typed errors, auto-commit
 
-### Part 6: Provider System
-How to support multiple providers (never hardcode to one):
-- Provider interface, built-in providers, custom providers
-- OpenAI-compatible endpoints (Ollama, vLLM, LiteLLM)
-- Provider registry, fallback chain, task-based routing
+### Part 7: Advanced Agent Patterns (8 production features)
+See `references/advanced-patterns.md` for full details:
 
-### Part 7: Production Patterns
+| Feature | What It Does | From |
+|---|---|---|
+| **MCP** | Standard tool integration via JSON-RPC | OpenClaw, Kilo Code |
+| **Skills System** | Reusable knowledge documents | OpenClaw, OpenCode |
+| **Memory System** | Cross-session persistent memory | OpenClaw (791 files) |
+| **Plugin System** | Extend agent without modifying source | OpenClaw (5383 files) |
+| **Cost Tracking** | Token counting, budget control | OpenClaw, OpenCode |
+| **Observability** | Structured logging, tracing, metrics | OpenClaw, OpenCode |
+| **Hooks System** | Lifecycle hooks (before/after LLM, tools) | OpenClaw (1333 files) |
+| **Multi-Modal** | Image input (screenshots, designs) | All modern agents |
+
+### Part 8: Production Patterns
 - Security patterns (tool sandboxing, permissions, sanitization)
 - Error handling (retry, graceful degradation, recovery)
 - Testing patterns (unit, integration, E2E)
@@ -180,9 +186,9 @@ Knowledge verified from deep code study of:
 |---|---|---|---|
 | [earendil-works/pi](https://github.com/earendil-works/pi) | 62K | TypeScript | Two-loop, tree sessions, extensions, compaction |
 | [paul-gauthier/aider](https://github.com/paul-gauthier/aider) | 30K+ | Python | Edit formats, fuzzy match, linter, git, architect |
-| [anomalyco/opencode](https://github.com/anomalyco/opencode) | 20K+ | TypeScript | Effect-TS, permission system, plugins |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | 378K | TypeScript | Agent-harness, branch compaction, skills |
-| [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) | 20K+ | TypeScript | Scout mode, reference guidance |
+| [anomalyco/opencode](https://github.com/anomalyco/opencode) | 20K+ | TypeScript | Effect-TS, permission system, plugins, skills |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | 378K | TypeScript | Agent-harness, compaction, memory, MCP, hooks |
+| [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) | 20K+ | TypeScript | Scout mode, reference guidance, MCP |
 
 Plus behavioral study of: Claude Code, Codex, Cursor, GitHub Copilot, Kiro, Devin, Trae, and more.
 
@@ -192,33 +198,34 @@ Plus behavioral study of: Claude Code, Codex, Cursor, GitHub Copilot, Kiro, Devi
 
 ```
 hera/
-├── SKILL.md                    The skill (32 sections, 3100+ lines)
-├── README.md                   This file
-├── AGENTS.md                   Root contract (Hera Framework)
-├── HERA_FRAMEWORK.md           Structural framework
-├── CLAUDE.md                   Claude Code config
-├── CHANGELOG.md                Version history
-├── CONTRIBUTING.md             Contribution guide
-├── install.sh                  Installation script (18 agents)
-├── package.json                npm metadata
-├── LICENSE                     MIT License
+├── SKILL.md                      The skill (33 sections, 3100+ lines)
+├── README.md                     This file
+├── AGENTS.md                     Root contract (Hera Framework)
+├── HERA_FRAMEWORK.md             Structural framework (663 lines)
+├── CLAUDE.md                     Claude Code config
+├── CHANGELOG.md                  Version history
+├── CONTRIBUTING.md               Contribution guide
+├── install.sh                    Installation script (18 agents)
+├── package.json                  npm metadata
+├── LICENSE                       MIT License
 ├── references/
-│   └── innovation-patterns.md  Innovation patterns (deep code study)
+│   ├── innovation-patterns.md    Innovation patterns (fast, smart, not stupid)
+│   └── advanced-patterns.md      Advanced patterns (MCP, skills, memory, plugins, cost, hooks)
 ├── docs/
-│   ├── PATTERNS.md             Production patterns
-│   ├── STREAMING.md            Streaming patterns
-│   ├── MEMORY.md               Memory management
-│   └── ROUTING.md              Multi-model routing
+│   ├── PATTERNS.md               Production patterns
+│   ├── STREAMING.md              Streaming patterns
+│   ├── MEMORY.md                 Memory management
+│   └── ROUTING.md                Multi-model routing
 ├── templates/
-│   ├── *.ts                    6 TypeScript templates
-│   └── python/*.py             6 Python templates
+│   ├── *.ts                      6 TypeScript templates
+│   └── python/*.py               6 Python templates
 ├── cli/
-│   ├── hera-init.ts            CLI: project scaffolding
-│   └── hera-validate.ts        CLI: validation
+│   ├── hera-init.ts              CLI: project scaffolding
+│   └── hera-validate.ts          CLI: validation
 ├── examples/
-│   ├── full-agent/             TypeScript example
-│   └── python-agent/           Python example (29 tests)
-└── .github/actions/validate/  CI/CD validation action
+│   ├── full-agent/               TypeScript example (20 files)
+│   └── python-agent/             Python example (27 files, 29 tests)
+└── .github/actions/validate/    CI/CD validation action
 ```
 
 ---
