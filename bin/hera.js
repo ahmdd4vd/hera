@@ -11,6 +11,9 @@
  *   npx hera-agent cursor       # Install for Cursor
  *   npx hera-agent all          # Install for all agents
  *   npx hera-agent --help       # Show help
+ *
+ * Subcommands (built-in):
+ *   npx hera-agent graph <cmd>  # Visualize graphify knowledge graph
  */
 
 const fs = require('fs');
@@ -30,6 +33,9 @@ const colors = {
 };
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com/david-aistudio/hera/main';
+
+// Subcommand dispatch (graph, etc.)
+const SUBCOMMANDS = ['graph'];
 
 // Supported agents and their install configs
 const AGENTS = {
@@ -326,6 +332,18 @@ async function main() {
 
   if (args.includes('--help') || args.includes('-h')) {
     showHelp();
+    return;
+  }
+
+  if (args[0] === 'graph') {
+    // Delegate to hera-graph subcommand
+    try {
+      execSync(`npx tsx ${path.join(__dirname, '..', 'cli', 'hera-graph.ts')} ${args.slice(1).join(' ')}`, {
+        stdio: 'inherit',
+      });
+    } catch (err) {
+      process.exit(1);
+    }
     return;
   }
 

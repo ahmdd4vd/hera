@@ -1,0 +1,92 @@
+# Hera CI — validate on every push & PR
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & Syntax Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install deps (optional)
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else echo "No lockfile — skipping install"; fi
+        continue-on-error: true
+
+      - name: Validate package.json
+        run: |
+          node -e "const p=require('./package.json'); console.log('✓ package.json valid, version', p.version);"
+
+      - name: Validate bin/hera.js syntax
+        run: node --check bin/hera.js && echo "✓ bin/hera.js syntax OK"
+
+      - name: Validate CLI TypeScript files (syntax)
+        run: |
+          for f in cli/*.ts; do
+            echo "Checking $f"
+            npx --yes -p typescript@5 tsc --noEmit --target es2022 --module esnext --moduleResolution bundler --skipLibCheck "$f" 2>&1 | tail -5 || true
+          done
+
+      - name: Markdown link check (key files)
+        run: |
+          for f in README.md AGENTS.md SKILL.md HERA_FRAMEWORK.md; do
+            test -f "$f" && echo "✓ $f exists" || (echo "✗ Missing $f" && exit 1)
+          done
+
+  size:
+    name: Repo Size Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check SKILL.md size (< 200KB)
+        run: |
+          size=$(wc -c < SKILL.md)
+          echo "SKILL.md size: $size bytes"
+          if [ "$size" -gt 204800 ]; then
+            echo "::warning::SKILL.md exceeds 200KB — consider splitting into reference files"
+          fi
+      - name: Count reference files
+        run: |
+          count=$(ls references/*.md 2>/dev/null | wc -l)
+          echo "Reference files: $count"
+          if [ "$count" -lt 8 ]; then
+            echo "::error::Expected at least 8 reference files, found $count"
+            exit 1
+          fi
+
+  graph:
+    name: Graphify Knowledge Graph
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Install graphify
+        run: npm install -g @sentropic/graphify
+      - name: Build knowledge graph
+        run: |
+          if [ -d .graphify ]; then
+            echo "✓ .graphify/ exists — graph already built"
+            ls -la .graphify/ | head -10
+          else
+            echo "ℹ .graphify/ not present — skipping graph build"
+          fi

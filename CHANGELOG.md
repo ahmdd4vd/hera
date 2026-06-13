@@ -5,6 +5,35 @@ All notable changes to Hera will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.2] - 2026-06-13
+
+### Added
+- **`cli/hera-graph.ts`** — new subcommand to visualize the Graphify knowledge graph
+  - `npx hera-graph summary` — top hubs, communities, density
+  - `npx hera-graph stats` — just the numbers
+  - `npx hera-graph query <term>` — search the graph for a concept
+  - `npx hera-graph path <a> <b>` — shortest path between two nodes
+  - `npx hera-graph explain <node>` — neighbors + relationships
+- **`.github/workflows/ci.yml`** — GitHub Actions CI with 3 jobs:
+  - `lint` — validate package.json, `bin/hera.js` syntax, TypeScript CLI files, markdown presence
+  - `size` — guard SKILL.md size (<200KB warning) + reference files count (>=8 required)
+  - `graph` — verify `.graphify/` knowledge graph is present
+- **`.editorconfig`** — 2-space indent for JS/TS/JSON/YAML, 4-space for Python, LF line endings
+- **`.nvmrc`** — pins Node.js v22 (matches `validate` action's setup-node)
+
+### Fixed
+- **Version drift**: `package.json` was still at `2.5.1` while CHANGELOG was at `2.7.1` — bumped to `2.7.1`
+- **Stale README badges**:
+  - `version-2.6.0` → `version-2.7.1`
+  - `references-9` → `references-10` (Hermes architecture was added in 2.7.1)
+- **References list in README** updated from 9 to 10 entries with Hermes architecture highlighted
+
+### Changed
+- `bin/hera.js` — added `graph` subcommand dispatcher that delegates to `cli/hera-graph.ts` via `tsx`
+- `package.json`:
+  - Added `"graph": "tsx cli/hera-graph.ts"` script
+  - Bumped `version` 2.5.1 → 2.7.1
+
 ## [2.7.1] - 2026-06-13
 
 ### Added

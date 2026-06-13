@@ -9,12 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/version-2.6.0-blue?style=flat-square" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/version-2.7.1-blue?style=flat-square" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/agents-18+-brightgreen?style=flat-square" alt="Agents"></a>
   <a href="#"><img src="https://img.shields.io/badge/sections-32-purple?style=flat-square" alt="Sections"></a>
   <a href="#"><img src="https://img.shields.io/badge/templates-12-orange?style=flat-square" alt="Templates"></a>
-  <a href="#"><img src="https://img.shields.io/badge/references-9-yellow?style=flat-square" alt="References"></a>
+  <a href="#"><img src="https://img.shields.io/badge/references-10-yellow?style=flat-square" alt="References"></a>
   <a href="#"><img src="https://img.shields.io/badge/repos_studied-9-red?style=flat-square" alt="Repos Studied"></a>
 </p>
 
@@ -40,7 +40,7 @@ npx hera-agent cursor
 - Complete architecture reference (verified from 9 codebases, 770K+ combined stars)
 - 12 code templates (6 TypeScript + 6 Python, copy-paste ready)
 - 2 example agents (TypeScript + Python, full working implementations)
-- 9 reference files (advanced patterns, token optimization, ECC patterns, spec-driven dev, innovation patterns, Claude Code architecture, ECC architecture, OpenCode architecture, Kilo Code architecture, Aider architecture)
+- 10 reference files (advanced patterns, token optimization, ECC patterns, spec-driven dev, innovation patterns, Claude Code architecture, ECC architecture, OpenCode architecture, Kilo Code architecture, Aider architecture, **Hermes architecture**)
 - Validation checklist (50+ checks)
 - Security, error handling, testing patterns
 - Deployment guide (local, Docker, cloud)

@@ -1,13 +1,14 @@
 {
   "name": "hera-agent",
-  "version": "2.5.1",
+  "version": "2.7.1",
   "description": "Hera — AI Coding Agent Architecture Reference. Install skill/reference for 18+ AI coding agents.",
   "main": "index.js",
   "bin": {
     "hera": "./bin/hera.js"
   },
   "scripts": {
-    "test": "echo \"No tests yet\""
+    "test": "echo \"No tests yet\"",
+    "graph": "tsx cli/hera-graph.ts"
   },
   "keywords": [
     "ai-agent",
