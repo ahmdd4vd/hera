@@ -22,14 +22,53 @@ Hera is a technical reference document that explains how [Pi Agent](https://gith
 
 Every section in this document is verified against the actual source code. This is not a tutorial or a blog post — it's a breakdown of a real, production-grade agent architecture.
 
+**Hera Framework** is included — a structural framework based on AGENTS.md hierarchy that keeps any agent project organized and maintainable.
+
 **Use this to:**
 - Understand how coding agents work under the hood
 - Build your own agent from scratch
 - Reference proven patterns for agent design
+- Structure your agent project with Hera Framework
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/david-aistudio/hera.git
+cd hera
+./install.sh <agent-name>
+```
+
+**Supported agents:**
+
+| Agent | Command |
+|---|---|
+| Claude Code | `./install.sh claude` |
+| Hermes | `./install.sh hermes` |
+| OpenCode | `./install.sh opencode` |
+| Codex | `./install.sh codex` |
+| Cursor | `./install.sh cursor` |
+| Antigravity | `./install.sh antigravity` |
+| Pi | `./install.sh pi` |
+| Gemini CLI | `./install.sh gemini` |
+| Aider | `./install.sh aider` |
+| GitHub Copilot | `./install.sh copilot` |
+| Amp | `./install.sh amp` |
+| Kilo Code | `./install.sh kilo` |
+| Kiro | `./install.sh kiro` |
+| Devin | `./install.sh devin` |
+| Trae | `./install.sh trae` |
+| CodeBuddy | `./install.sh codebuddy` |
+| OpenClaw | `./install.sh claw` |
+| Factory Droid | `./install.sh droid` |
+| All agents | `./install.sh all` |
 
 ---
 
 ## What's Covered
+
+The main reference is in **SKILL.md** (37KB, 19 sections):
 
 | # | Section | Content |
 |---|---------|---------|
@@ -55,6 +94,20 @@ Every section in this document is verified against the actual source code. This 
 
 ---
 
+## Hera Framework
+
+**HERA_FRAMEWORK.md** contains a structural framework for organizing agent projects. It's based on the AGENTS.md hierarchy pattern — a proven approach for keeping large projects maintainable.
+
+Key concepts:
+- **AGENTS.md hierarchy**: Root AGENTS.md is the project-wide contract, child AGENTS.md files own specific domains
+- **Read Before Editing**: Always read the relevant AGENTS.md chain before making changes
+- **Update After Editing**: Update AGENTS.md when changes affect structure, contracts, or workflows
+- **Verification**: Check that changes match the established patterns
+
+This framework is what makes the difference between a collection of files and a well-structured project.
+
+---
+
 ## Key Architecture Decisions
 
 **Two-loop agent loop:**
@@ -71,45 +124,6 @@ Users can inject messages while the agent is running without interrupting it. Th
 
 **Provider abstraction:**
 The same API works for 20+ providers (OpenAI, Anthropic, Google, Bedrock, etc.). Providers register handlers for their API type.
-
----
-
-## Supported Agents
-
-This reference can be loaded into any of these AI coding agents:
-
-| Agent | Config File |
-|---|---|
-| Claude Code | `CLAUDE.md` |
-| Hermes | `~/.hermes/skills/hera/SKILL.md` |
-| OpenCode | `AGENTS.md` |
-| Codex | `AGENTS.md` |
-| Cursor | `.cursor/rules/hera.mdc` |
-| Antigravity | `.agents/rules/hera.md` |
-| Pi | `~/.pi/agent/skills/hera/SKILL.md` |
-| Gemini CLI | `GEMINI.md` |
-| Aider | `AGENTS.md` |
-| GitHub Copilot | `~/.copilot/skills/hera/SKILL.md` |
-| Amp | `AGENTS.md` |
-| Kilo Code | `.kilo/skills/hera/SKILL.md` |
-| Kiro | `.kiro/skills/hera/SKILL.md` |
-| Devin | `~/.config/devin/skills/hera/SKILL.md` |
-| Trae | `AGENTS.md` |
-| CodeBuddy | `CODEBUDDY.md` |
-| OpenClaw | `AGENTS.md` |
-| Factory Droid | `AGENTS.md` |
-
----
-
-## Installation
-
-```bash
-git clone https://github.com/david-aistudio/hera.git
-cd hera
-./install.sh <agent-name>
-```
-
-Available agent names: `claude`, `hermes`, `opencode`, `codex`, `cursor`, `antigravity`, `pi`, `gemini`, `aider`, `copilot`, `amp`, `kilo`, `kiro`, `devin`, `trae`, `codebuddy`, `claw`, `droid`, `all`
 
 ---
 
@@ -153,18 +167,18 @@ User Input
 
 ```
 hera/
-├── SKILL.md                    Main architecture reference (37KB, 19 sections)
+├── AGENTS.md                   Root contract (Hera Framework)
+├── HERA_FRAMEWORK.md           Structural framework
+├── SKILL.md                    Architecture reference (19 sections)
 ├── README.md                   This file
-├── AGENTS.md                   Config for OpenCode, Codex, Aider, Amp, etc.
-├── CLAUDE.md                   Config for Claude Code
-├── install.sh                  Installation script for all agents
+├── CLAUDE.md                   Claude Code config
+├── install.sh                  Installation script (18 agents)
 ├── package.json                npm metadata
 ├── LICENSE                     MIT License
-├── assets/
-│   └── hera-logo.jpg           Logo image
+├── assets/hera-logo.jpg        Logo
 ├── .cursor/rules/hera.mdc     Cursor config
 ├── .agents/rules/hera.md      Antigravity config
-├── .agents/workflows/hera.md  Antigravity workflow config
+├── .agents/workflows/hera.md  Antigravity workflow
 └── .kiro/skills/hera/SKILL.md Kiro config
 ```
 
