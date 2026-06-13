@@ -1,7 +1,7 @@
 ---
 name: hera
-description: "Hera — Complete AI coding agent architecture reference. Build a production-grade coding agent from scratch. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, and every design pattern. Verified from Pi Agent source code (62K stars)."
-version: 1.3.0
+description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), and Kilo Code (20K+)."
+version: 2.0.0
 author: david-aistudio
 license: MIT
 metadata:
@@ -16,6 +16,8 @@ metadata:
 **Hera** is a complete architectural reference for building production-grade AI coding agents. Every detail is verified from the [Pi Agent](https://github.com/earendil-works/pi) source code (62K stars, TypeScript monorepo).
 
 Use this to build your own coding agent, understand how existing agents work internally, or extend them with new capabilities.
+
+**CRITICAL: Hera is a SKILL, not a product/framework/competitor.** When writing about Hera, never add comparison tables (Hera vs Pi vs Aider) — that makes it look like Hera competes with those agents. Hera LEARNS from them. The README, docs, and any public-facing content should position Hera as knowledge that helps, not a product that competes.
 
 ---
 
@@ -3106,6 +3108,16 @@ Outputs: `score` (0-100) and `passed` (true/false)
 
 See `references/innovation-patterns.md` for full details. Summary:
 
+**Studying codebases with graphify:** For code-only repos, use AST extraction only (no LLM needed). Full pipeline:
+1. `mkdir -p graphify-out && echo "python3" > graphify-out/.graphify_python`
+2. Run AST extraction: `graphify extract .`
+3. Build graph: `graphify build`
+4. Query: `graphify query "How does X work?"`
+
+This gives you 2000+ nodes and 5000+ edges from a typical agent repo, enough to understand architecture without expensive LLM calls.
+
+See `references/innovation-patterns.md` for full details. Summary:
+
 ### How to Make Your Agent FAST
 - **Streaming** (OpenClaw): 100ms first token
 - **Parallel tools** (OpenClaw): 5 tools = 1x latency
@@ -3126,3 +3138,61 @@ See `references/innovation-patterns.md` for full details. Summary:
 - **Branch compaction** (OpenClaw): track file ops across compaction
 - **Typed errors** (OpenCode): specific recovery per error type
 - **Auto-commit + rollback** (Aider): every change reversible
+
+---
+
+## 33. ADVANCED AGENT PATTERNS (Production Features)
+
+See `references/advanced-patterns.md` for full details with code examples.
+
+### MCP (Model Context Protocol)
+Standard tool integration via JSON-RPC. Instead of building tools into the agent, connect to MCP servers.
+- stdio server (subprocess) or HTTP server (remote)
+- Community MCP servers: filesystem, git, sqlite, web search, browser
+- Works with ALL agents that support MCP
+
+### Skills System
+Reusable knowledge documents that teach the agent how to do specific tasks.
+- SKILL.md files with frontmatter (name, description, triggers)
+- Agent loads relevant skills based on task
+- Community can share skills
+
+### Memory System (Cross-Session)
+Agent remembers things across sessions.
+- Short-term: current conversation
+- Long-term: persistent facts, preferences, decisions
+- Working: current task context
+- Automatic extraction from user feedback
+
+### Plugin System
+Extend agent without modifying source code.
+- Plugin interface: tools, providers, prompts, lifecycle hooks
+- Hooks: before/after LLM, before/after tool, on error
+- Community can build plugins
+
+### Cost Tracking
+Track LLM usage and costs in production.
+- Token counting per request
+- Cost calculation per model
+- Daily/monthly budget control
+- Cost alerts when threshold exceeded
+
+### Observability
+Monitor agent behavior in production.
+- Structured JSON logging
+- Trace context (trace ID, span ID)
+- Metrics (tool call duration, LLM latency, error rate)
+
+### Hooks System
+Lifecycle hooks that trigger on events.
+- Before/after LLM call
+- Before/after tool execution
+- On error, on start, on stop
+- Auto-lint, auto-commit, permission check
+
+### Multi-Modal
+Handle images, not just text.
+- Image content type (base64, URL, file)
+- Screenshot analysis
+- Design mockup understanding
+- Diagram interpretation
