@@ -1,0 +1,34 @@
+{
+  "name": "hera",
+  "version": "1.0.0",
+  "description": "Hera — Complete AI coding agent architecture reference. Build a production-grade coding agent from scratch.",
+  "main": "SKILL.md",
+  "scripts": {
+    "install": "bash install.sh",
+    "install:all": "bash install.sh all"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david-aistudio/hera.git"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "coding-agent",
+    "architecture",
+    "typescript",
+    "llm",
+    "openai",
+    "anthropic",
+    "claude",
+    "cursor",
+    "copilot",
+    "pi-agent"
+  ],
+  "author": "david-aistudio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/david-aistudio/hera/issues"
+  },
+  "homepage": "https://github.com/david-aistudio/hera#readme"
+}
