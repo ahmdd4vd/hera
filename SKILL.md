@@ -1,7 +1,7 @@
 ---
 name: hera
-description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, ECC patterns (64 agents, autonomous loops, self-debugging), and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), Kilo Code (20K+), GSD Core, RTK, Headroom, and ECC (211.9K)."
-version: 2.2.0
+description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, ECC patterns (64 agents, autonomous loops, self-debugging), and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), Claude Code/OpenClaude (211.9K), Kilo Code (20K+), GSD Core, RTK, Headroom, and ECC (211.9K)."
+version: 2.4.0
 author: david-aistudio
 license: MIT
 metadata:
