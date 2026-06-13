@@ -1,7 +1,7 @@
 ---
 name: hera
-description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), and Kilo Code (20K+)."
-version: 2.0.0
+description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), Kilo Code (20K+), GSD Core, RTK, and Headroom."
+version: 2.2.0
 author: david-aistudio
 license: MIT
 metadata:
@@ -3196,3 +3196,121 @@ Handle images, not just text.
 - Screenshot analysis
 - Design mockup understanding
 - Diagram interpretation
+
+---
+
+## 34. TOKEN OPTIMIZATION & CONTEXT COMPRESSION
+
+Patterns for reducing LLM token consumption by 60-95%. From deep study of RTK and Headroom.
+
+### Token Optimization (from RTK, 60-90% reduction)
+
+RTK is a CLI proxy that filters and compresses command outputs before they reach the LLM. Key patterns:
+
+```
+Agent runs: git log --oneline -50
+RTK intercepts → compresses → LLM sees 50 lines → 10 lines
+Result: 60-90% fewer tokens
+```
+
+**Two hook strategies:**
+- **Auto-Rewrite** (default): Hook intercepts command, rewrites before execution. 100% adoption.
+- **Suggest**: Hook emits systemMessage hint. Agent decides autonomously. ~70-85% adoption.
+
+**Filtering strategies:**
+- Cap output lines (git log 50 → 10)
+- Remove redundant whitespace/formatting
+- Summarize verbose output (npm install → just errors)
+- Deduplicate repeated patterns
+
+### Context Compression (from Headroom, 60-95% reduction)
+
+Headroom is a context compression layer with 6 algorithms:
+
+1. **Diff Compressor**: Compress git diff output
+   - Cap file count (keep heaviest files)
+   - Cap per-file hunk count (keep first + last + top-scored)
+   - Trim context lines around changes
+
+2. **Search Compressor**: Compress grep/ripgrep output (5-10x)
+   - Parse into file:line:content structure
+   - Score by relevance (change density, context words)
+   - Keep top-K matches per file
+
+3. **Log Compressor**: Compress log output
+   - Remove timestamps
+   - Deduplicate repeated lines
+   - Keep error/warning lines, summarize info
+
+4. **Adaptive Sizer**: Auto-select compression ratio
+   - Based on input size and token budget
+   - Aggressive for large inputs, gentle for small
+
+5. **Relevance Scoring**: Compress based on importance
+   - Priority pattern boost (errors, warnings, key functions)
+   - Context word overlap with user query
+   - Change density scoring
+
+6. **Live Zone Compression**: Only compress relevant parts
+   - Detect "live zone" (recent, relevant content)
+   - Compress old/irrelevant content aggressively
+   - Keep live zone intact
+
+### CCR (Content-Addressed Cache)
+
+Cache compression results by content hash:
+```
+Input: git diff (1000 lines)
+Hash: md5(input)
+Cache hit? → return cached compressed version
+Cache miss? → compress → store → return
+```
+
+### Decision: When to Compress
+
+```
+Q: Should I compress this output?
+├── Output < 50 lines → No (overhead > savings)
+├── Output 50-200 lines → Light compression (cap lines)
+├── Output 200-1000 lines → Medium compression (filter + cap)
+└── Output > 1000 lines → Aggressive compression (all algorithms)
+```
+
+---
+
+## 35. SPEC-DRIVEN DEVELOPMENT (from GSD Core)
+
+See `references/spec-driven-development.md` for full details.
+
+### The Pipeline
+```
+REQUIREMENTS → RESEARCH → PLANS → EXECUTION → VERIFICATION → UAT
+```
+
+Every step verified before moving to the next. No skipping.
+
+### Multi-Agent Orchestration
+Spawn specialized agents with fresh context windows:
+- **Planner** (cheap model): Breaks down tasks into atomic steps
+- **Researcher** (cheap model): Explores codebase, finds patterns
+- **Executor** (expensive model): Implements code changes
+- **Reviewer** (cheap model): Reviews code quality
+- **Debugger** (expensive model): Fixes bugs systematically
+- **Verifier** (cheap model): Checks changes against requirements
+
+Key insight: each agent gets a FRESH context window. No pollution from previous agents.
+
+### Context Engineering
+Structured artifacts that give the agent everything it needs:
+- What to do, why, files to touch, patterns to follow, constraints, verification
+
+### Hierarchical Skill Routing
+Two-stage routing: namespace router → concrete skill
+- Token efficient: only load 6 routers initially (not 67 skills)
+- Namespace examples: gsd-workflow, gsd-project, gsd-quality
+
+### State Management
+Persistent project memory across sessions:
+- Current phase, completed tasks, pending tasks
+- Decisions made, lessons learned
+- Stored in `.gsd/state.yaml`
