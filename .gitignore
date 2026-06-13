@@ -32,3 +32,8 @@ temp/
 
 # Graphify knowledge graph (regenerable, ephemeral)
 .graphify/
+
+# Test output
+examples/python-agent/.sessions/
+examples/python-agent/hello.py
+examples/full-agent/ts-hello.ts
