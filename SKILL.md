@@ -1,6 +1,6 @@
 ---
 name: hera
-description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), Kilo Code (20K+), GSD Core, RTK, and Headroom."
+description: "Hera — A skill that teaches AI coding agents how to build production-grade coding agents. Covers agent loop, harness, session management, tools, extensions, AI provider abstraction, compaction, streaming, MCP, skills system, memory, plugins, cost tracking, observability, hooks, multi-modal, spec-driven development, token optimization, ECC patterns (64 agents, autonomous loops, self-debugging), and every design pattern. Verified from deep code study of Pi Agent (62K stars), Aider (30K+), OpenCode (20K+), OpenClaw (378K), Kilo Code (20K+), GSD Core, RTK, Headroom, and ECC (211.9K)."
 version: 2.2.0
 author: david-aistudio
 license: MIT
@@ -3145,57 +3145,23 @@ See `references/innovation-patterns.md` for full details. Summary:
 
 See `references/advanced-patterns.md` for full details with code examples.
 
-### MCP (Model Context Protocol)
-Standard tool integration via JSON-RPC. Instead of building tools into the agent, connect to MCP servers.
-- stdio server (subprocess) or HTTP server (remote)
-- Community MCP servers: filesystem, git, sqlite, web search, browser
-- Works with ALL agents that support MCP
+8 production features: MCP, Skills System, Memory System, Plugin System, Cost Tracking, Observability, Hooks System, Multi-Modal.
 
-### Skills System
-Reusable knowledge documents that teach the agent how to do specific tasks.
-- SKILL.md files with frontmatter (name, description, triggers)
-- Agent loads relevant skills based on task
-- Community can share skills
+---
 
-### Memory System (Cross-Session)
-Agent remembers things across sessions.
-- Short-term: current conversation
-- Long-term: persistent facts, preferences, decisions
-- Working: current task context
-- Automatic extraction from user feedback
+## 34. SPEC-DRIVEN DEVELOPMENT (from GSD Core)
 
-### Plugin System
-Extend agent without modifying source code.
-- Plugin interface: tools, providers, prompts, lifecycle hooks
-- Hooks: before/after LLM, before/after tool, on error
-- Community can build plugins
+See `references/spec-driven-development.md` for full details.
 
-### Cost Tracking
-Track LLM usage and costs in production.
-- Token counting per request
-- Cost calculation per model
-- Daily/monthly budget control
-- Cost alerts when threshold exceeded
+Pipeline: Requirements → Research → Plans → Execution → Verification. Multi-agent orchestration with specialized agents. Context engineering with structured artifacts. Hierarchical skill routing (namespace → concrete). Persistent state management.
 
-### Observability
-Monitor agent behavior in production.
-- Structured JSON logging
-- Trace context (trace ID, span ID)
-- Metrics (tool call duration, LLM latency, error rate)
+---
 
-### Hooks System
-Lifecycle hooks that trigger on events.
-- Before/after LLM call
-- Before/after tool execution
-- On error, on start, on stop
-- Auto-lint, auto-commit, permission check
+## 35. TOKEN OPTIMIZATION & CONTEXT COMPRESSION
 
-### Multi-Modal
-Handle images, not just text.
-- Image content type (base64, URL, file)
-- Screenshot analysis
-- Design mockup understanding
-- Diagram interpretation
+See `references/token-optimization.md` for full details.
+
+RTK (60-90% reduction): CLI proxy that filters/compresses command outputs. Headroom (60-95% reduction): 6 compression algorithms (diff, search, log, adaptive, relevance, live zone). CCR caching for cached compression results.
 
 ---
 
