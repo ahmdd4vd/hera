@@ -50,7 +50,7 @@ hera/
 **`references/multi-provider-routing.md`** (9router multi-provider/OAuth/format-translator catalog — added 2026-06-13),
 **`references/provider-model-catalog.md`** (9router 7-category provider classification + 10 service kinds + model metadata schema + real per-provider model lists — added 2026-06-13)
 
-### Code Templates (24 files, 12 TypeScript + 12 Python)
+### Code Templates (28 files, 14 TypeScript + 14 Python)
 
 `templates/minimal-agent-loop.ts`, `templates/minimal-harness.ts`,
 `templates/minimal-session.ts`, `templates/minimal-tool.ts`,
@@ -64,7 +64,15 @@ hera/
 **`templates/image-provider.ts`** (12+ image providers: DALL-E, Nano Banana, FLUX, Stability, BFL, Recraft, Runway, ComfyUI, SDWebUI, HF, Vertex — added 2026-06-13),
 **`templates/web-search.ts`** (9+ search providers: Tavily, Brave, Serper, Exa, SearXNG, Google PSE, Linkup, SearchAPI, You.com — added 2026-06-13),
 **`templates/web-fetch.ts`** (4+ fetch providers: Firecrawl, Jina, Exa, Tavily — added 2026-06-13),
-**`templates/embedding-provider.ts`** (11+ embedding providers: OpenAI, Voyage, Mistral, Jina, Cohere, Together, Nebius, SiliconFlow, Fireworks, HF, Gemini — added 2026-06-13)
+**`templates/embedding-provider.ts`** (11+ embedding providers: OpenAI, Voyage, Mistral, Jina, Cohere, Together, Nebius, SiliconFlow, Fireworks, HF, Gemini — added 2026-06-13),
+**`templates/spoof-headers.ts`** (Claude CLI / Codex / Antigravity / Kiro / Cursor client fingerprint — added 2026-06-13),
+**`templates/api-key-validator.ts`** (per-provider probe configs for 30+ providers — added 2026-06-13),
+**`templates/antigravity-wrapper.ts`** (Cloud Code envelope + double system prompt — added 2026-06-13),
+**`templates/quota-tracker.ts`** (per-provider/model/account limit enforcement — added 2026-06-13),
+**`templates/mcp-client.ts`** (MCP client: HTTP+SSE + stdio transport, multi-session — added 2026-06-13),
+**`templates/mcp-server.ts`** (MCP server: register tools, expose over stdio/HTTP+SSE — added 2026-06-13),
+**`templates/mcp-stdio-sse-bridge.ts`** (production stdio↔SSE bridge with smart text filtering — added 2026-06-13),
+**`templates/mcp-marketplace.ts`** (catalog of 20+ public MCP servers + install/uninstall + Claude CLI config builder — added 2026-06-13)
 
 Python equivalents in `templates/python/` (`minimal_agent_loop.py` etc.)
 **`templates/multi-provider-router.py`** (Python equivalent — added 2026-06-13)
