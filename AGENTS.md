@@ -75,7 +75,8 @@ hera/
 **`templates/mcp-marketplace.ts`** (catalog of 20+ public MCP servers + install/uninstall + Claude CLI config builder — added 2026-06-13),
 **`templates/tunnel.ts`** (TunnelManager + state persistence + health check + watchdog — added 2026-06-13),
 **`templates/tunnel-cloudflare.ts`** (Cloudflare Quick Tunnel: binary download + spawn + URL parse — added 2026-06-13),
-**`templates/tunnel-tailscale.ts`** (Tailscale Funnel: daemon mgmt + login detection + Funnel serve — added 2026-06-13)
+**`templates/tunnel-tailscale.ts`** (Tailscale Funnel: daemon mgmt + login detection + Funnel serve — added 2026-06-13),
+**`templates/updater.ts`** (npm self-updater: version check + detached updater process + status HTTP server + relaunch — added 2026-06-13)
 
 Python equivalents in `templates/python/` (`minimal_agent_loop.py` etc.)
 **`templates/multi-provider-router.py`** (Python equivalent — added 2026-06-13)
