@@ -34,12 +34,12 @@
 
 ```bash
 # One command — auto-detects your agent
-npx hera-agent
+npx hera-skill
 
 # Or specify your agent
-npx hera-agent claude
-npx hera-agent hermes
-npx hera-agent cursor
+npx hera-skill claude
+npx hera-skill hermes
+npx hera-skill cursor
 ```
 
 > **What you get:** Complete architecture reference, 28+ copy-paste templates, 18 reference files, 3 full working example agents, validation checklist, security patterns, and more — all verified from real production codebases.
@@ -112,13 +112,13 @@ Hera is a **technical knowledge base** that explains how production-grade AI cod
 npx skills add ahmdd4vd/hera
 ```
 
-### Option 2: npx hera-agent
+### Option 2: npx hera-skill
 
 ```bash
-npx hera-agent              # Auto-detect
-npx hera-agent claude       # Specific agent
-npx hera-agent --yes        # Skip confirmation (CI/CD)
-npx hera-agent --version-tag v2.10.0  # Pin version
+npx hera-skill              # Auto-detect
+npx hera-skill claude       # Specific agent
+npx hera-skill --yes        # Skip confirmation (CI/CD)
+npx hera-skill --version-tag v2.10.0  # Pin version
 ```
 
 ### Option 3: One-liner
@@ -166,114 +166,114 @@ Copy the right file to the right place. See [agent mapping table](#-supported-ag
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Claude_Code-7C3AED?style=flat-square&logo=anthropic&logoColor=white"> &nbsp;Claude Code</td>
-<td><code>npx hera-agent claude</code></td>
+<td><code>npx hera-skill claude</code></td>
 <td><code>CLAUDE.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Hermes-0ea5e9?style=flat-square"> &nbsp;Hermes</td>
-<td><code>npx hera-agent hermes</code></td>
+<td><code>npx hera-skill hermes</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>~/.hermes/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white"> &nbsp;Cursor</td>
-<td><code>npx hera-agent cursor</code></td>
+<td><code>npx hera-skill cursor</code></td>
 <td><code>hera.mdc</code></td>
 <td><code>.cursor/rules/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/OpenCode-22c55e?style=flat-square"> &nbsp;OpenCode</td>
-<td><code>npx hera-agent opencode</code></td>
+<td><code>npx hera-skill opencode</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Codex-10b981?style=flat-square&logo=openai&logoColor=white"> &nbsp;Codex</td>
-<td><code>npx hera-agent codex</code></td>
+<td><code>npx hera-skill codex</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Kilo_Code-f59e0b?style=flat-square"> &nbsp;Kilo Code</td>
-<td><code>npx hera-agent kilo</code></td>
+<td><code>npx hera-skill kilo</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>.kilo/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Kiro-a855f7?style=flat-square"> &nbsp;Kiro</td>
-<td><code>npx hera-agent kiro</code></td>
+<td><code>npx hera-skill kiro</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>.kiro/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Aider-ec4899?style=flat-square"> &nbsp;Aider</td>
-<td><code>npx hera-agent aider</code></td>
+<td><code>npx hera-skill aider</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Gemini-4285f4?style=flat-square&logo=google&logoColor=white"> &nbsp;Gemini CLI</td>
-<td><code>npx hera-agent gemini</code></td>
+<td><code>npx hera-skill gemini</code></td>
 <td><code>GEMINI.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Pi-06b6d4?style=flat-square"> &nbsp;Pi</td>
-<td><code>npx hera-agent pi</code></td>
+<td><code>npx hera-skill pi</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>~/.pi/agent/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Copilot-000000?style=flat-square&logo=github&logoColor=white"> &nbsp;GitHub Copilot</td>
-<td><code>npx hera-agent copilot</code></td>
+<td><code>npx hera-skill copilot</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>~/.copilot/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Devin-7c3aed?style=flat-square"> &nbsp;Devin</td>
-<td><code>npx hera-agent devin</code></td>
+<td><code>npx hera-skill devin</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>~/.config/devin/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Antigravity-f97316?style=flat-square"> &nbsp;Antigravity</td>
-<td><code>npx hera-agent antigravity</code></td>
+<td><code>npx hera-skill antigravity</code></td>
 <td><code>hera.md</code></td>
 <td><code>.agents/rules/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Amp-14b8a6?style=flat-square"> &nbsp;Amp</td>
-<td><code>npx hera-agent amp</code></td>
+<td><code>npx hera-skill amp</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Trae-6366f1?style=flat-square"> &nbsp;Trae</td>
-<td><code>npx hera-agent trae</code></td>
+<td><code>npx hera-skill trae</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/CodeBuddy-84cc16?style=flat-square"> &nbsp;CodeBuddy</td>
-<td><code>npx hera-agent codebuddy</code></td>
+<td><code>npx hera-skill codebuddy</code></td>
 <td><code>SKILL.md</code></td>
 <td><code>~/.codebuddy/skills/hera/</code></td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/OpenClaw-ef4444?style=flat-square"> &nbsp;OpenClaw</td>
-<td><code>npx hera-agent claw</code></td>
+<td><code>npx hera-skill claw</code></td>
 <td><code>CLAW.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
 <td><img src="https://img.shields.io/badge/Factory_Droid-8b5cf6?style=flat-square"> &nbsp;Factory Droid</td>
-<td><code>npx hera-agent droid</code></td>
+<td><code>npx hera-skill droid</code></td>
 <td><code>AGENTS.md</code></td>
 <td>Project root</td>
 </tr>
 <tr>
-<td colspan="4" align="center"><strong>All agents</strong> &nbsp;→&nbsp; <code>npx hera-agent all</code> or <code>./install.sh all</code></td>
+<td colspan="4" align="center"><strong>All agents</strong> &nbsp;→&nbsp; <code>npx hera-skill all</code> or <code>./install.sh all</code></td>
 </tr>
 </table>
 

@@ -5,21 +5,21 @@
  * CLI installer for 18+ AI coding agents
  *
  * Usage:
- *   npx hera-agent              # Auto-detect and install (with confirmation)
- *   npx hera-agent claude       # Install for Claude Code
- *   npx hera-agent hermes       # Install for Hermes Agent
- *   npx hera-agent cursor       # Install for Cursor
- *   npx hera-agent all          # Install for all agents
- *   npx hera-agent --help       # Show help
- *   npx hera-agent list         # List all supported agents
- *   npx hera-agent uninstall    # Uninstall Hera from agent
+ *   npx hera-skill              # Auto-detect and install (with confirmation)
+ *   npx hera-skill claude       # Install for Claude Code
+ *   npx hera-skill hermes       # Install for Hermes Agent
+ *   npx hera-skill cursor       # Install for Cursor
+ *   npx hera-skill all          # Install for all agents
+ *   npx hera-skill --help       # Show help
+ *   npx hera-skill list         # List all supported agents
+ *   npx hera-skill uninstall    # Uninstall Hera from agent
  *
  * Flags:
  *   --yes, -y                   Skip confirmation prompt (for CI/CD)
  *   --version-tag <tag>         Install specific version/tag (default: main)
  *
  * Subcommands (built-in):
- *   npx hera-agent graph <cmd>  # Visualize graphify knowledge graph
+ *   npx hera-skill graph <cmd>  # Visualize graphify knowledge graph
  */
 
 const fs = require('fs');
@@ -602,7 +602,7 @@ async function installAgent(agentKey, options = {}) {
   const agent = AGENTS[agentKey];
   if (!agent) {
     console.log(`${colors.red}✗ Unknown agent: ${agentKey}${colors.reset}`);
-    console.log(`${colors.cyan}Run${colors.reset} npx hera-agent list ${colors.cyan}for available agents.${colors.reset}`);
+    console.log(`${colors.cyan}Run${colors.reset} npx hera-skill list ${colors.cyan}for available agents.${colors.reset}`);
     process.exit(1);
   }
 
@@ -726,7 +726,7 @@ async function uninstallAgent(agentKey) {
   const agent = AGENTS[agentKey];
   if (!agent) {
     console.log(`${colors.red}✗ Unknown agent: ${agentKey}${colors.reset}`);
-    console.log(`${colors.cyan}Run${colors.reset} npx hera-agent list ${colors.cyan}for available agents.${colors.reset}`);
+    console.log(`${colors.cyan}Run${colors.reset} npx hera-skill list ${colors.cyan}for available agents.${colors.reset}`);
     process.exit(1);
   }
 
@@ -804,7 +804,7 @@ async function interactiveSelect() {
 
   agentKeys.forEach((key, i) => {
     const agent = AGENTS[key];
-    console.log(`  ${colors.green}${String(i + 1).padStart(2)}${colors.reset})  ${colors.bold}${agent.name}${colors.reset}  ${colors.dim}(npx hera-agent ${key})${colors.reset}`);
+    console.log(`  ${colors.green}${String(i + 1).padStart(2)}${colors.reset})  ${colors.bold}${agent.name}${colors.reset}  ${colors.dim}(npx hera-skill ${key})${colors.reset}`);
   });
 
   console.log(`  ${colors.green}${String(agentKeys.length + 1).padStart(2)}${colors.reset})  ${colors.bold}All agents${colors.reset}`);
@@ -873,8 +873,8 @@ function listAgents() {
   }
 
   console.log('');
-  console.log(`${colors.cyan}Usage:${colors.reset} npx hera-agent <agent-key>`);
-  console.log(`${colors.cyan}Uninstall:${colors.reset} npx hera-agent uninstall <agent-key>`);
+  console.log(`${colors.cyan}Usage:${colors.reset} npx hera-skill <agent-key>`);
+  console.log(`${colors.cyan}Uninstall:${colors.reset} npx hera-skill uninstall <agent-key>`);
   console.log('');
 }
 
@@ -884,12 +884,12 @@ function showHelp() {
 ${colors.bold}Hera — AI Coding Agent Architecture Reference${colors.reset}
 
 ${colors.cyan}Usage:${colors.reset}
-  npx hera-agent                    Auto-detect and install (with confirmation)
-  npx hera-agent <agent>            Install for specific agent
-  npx hera-agent all                Install for all agents
-  npx hera-agent uninstall <agent>  Uninstall from specific agent
-  npx hera-agent list               List all supported agents
-  npx hera-agent --help             Show this help
+  npx hera-skill                    Auto-detect and install (with confirmation)
+  npx hera-skill <agent>            Install for specific agent
+  npx hera-skill all                Install for all agents
+  npx hera-skill uninstall <agent>  Uninstall from specific agent
+  npx hera-skill list               List all supported agents
+  npx hera-skill --help             Show this help
 
 ${colors.cyan}Flags:${colors.reset}
   --yes, -y                    Skip confirmation prompt (CI/CD friendly)
@@ -921,20 +921,20 @@ ${colors.cyan}Detection:${colors.reset}
   If no agent is detected, an interactive selection menu appears.
 
 ${colors.cyan}CI/CD usage:${colors.reset}
-  npx hera-agent claude --yes       # No prompt, auto-confirm
-  npx hera-agent all --yes          # Install for all, no prompt
+  npx hera-skill claude --yes       # No prompt, auto-confirm
+  npx hera-skill all --yes          # Install for all, no prompt
 
 ${colors.cyan}Version pinning:${colors.reset}
-  npx hera-agent claude --version-tag v2.10.0
-  npx hera-agent claude --version-tag develop
+  npx hera-skill claude --version-tag v2.10.0
+  npx hera-skill claude --version-tag develop
 
 ${colors.cyan}Examples:${colors.reset}
-  npx hera-agent claude              Install for Claude Code
-  npx hera-agent hermes              Install for Hermes Agent
-  npx hera-agent cursor              Install for Cursor
-  npx hera-agent all                 Install for all agents
-  npx hera-agent uninstall claude    Uninstall from Claude Code
-  npx hera-agent list                Show detailed agent info
+  npx hera-skill claude              Install for Claude Code
+  npx hera-skill hermes              Install for Hermes Agent
+  npx hera-skill cursor              Install for Cursor
+  npx hera-skill all                 Install for all agents
+  npx hera-skill uninstall claude    Uninstall from Claude Code
+  npx hera-skill list                Show detailed agent info
 `);
 }
 
@@ -1061,8 +1061,8 @@ async function main() {
   if (parsed.command === 'uninstall') {
     if (!parsed.agent) {
       console.log(`${colors.red}✗ Please specify an agent to uninstall.${colors.reset}`);
-      console.log(`${colors.cyan}Usage:${colors.reset} npx hera-agent uninstall <agent>`);
-      console.log(`${colors.cyan}Example:${colors.reset} npx hera-agent uninstall claude`);
+      console.log(`${colors.cyan}Usage:${colors.reset} npx hera-skill uninstall <agent>`);
+      console.log(`${colors.cyan}Example:${colors.reset} npx hera-skill uninstall claude`);
       process.exit(1);
     }
     await uninstallAgent(parsed.agent);
@@ -1099,7 +1099,7 @@ async function main() {
       if (skipConfirmation) {
         // In CI/CD mode with no detection, we can't proceed
         console.log(`${colors.red}✗ No agent detected and --yes flag is set (or non-TTY). Please specify an agent explicitly.${colors.reset}`);
-        console.log(`${colors.cyan}Example:${colors.reset} npx hera-agent claude --yes`);
+        console.log(`${colors.cyan}Example:${colors.reset} npx hera-skill claude --yes`);
         process.exit(1);
       }
 

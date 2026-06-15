@@ -110,7 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **`cli/hera-validate.ts`** — refactored from 374 lines into a thin CLI wrapper that imports from `lib/hera-validator.js`
-- **`bin/hera.js`** — subcommand dispatch now happens BEFORE the `--help` check, so `npx hera-agent graph --help` correctly delegates
+- **`bin/hera.js`** — subcommand dispatch now happens BEFORE the `--help` check, so `npx hera-skill graph --help` correctly delegates
 - **`install.sh`** bug fixes:
   - `trap 'rm -rf "$TEMP_DIR"' EXIT` cleans up temp dir (was leaking)
   - `download_file` uses `curl -fSL` and atomic `mv` from a temp file (partial downloads no longer corrupt target)
@@ -120,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Real bug in check pattern**: `Sequential execution support` used `code.includes("for...of")` (3 dots) which never matches valid JS. Replaced with regex `/\bfor\b.*\bof\b/`.
-- **Dispatcher order bug**: `npx hera-agent graph --help` was printing the installer's help instead of delegating to hera-graph.
+- **Dispatcher order bug**: `npx hera-skill graph --help` was printing the installer's help instead of delegating to hera-graph.
 
 ### Notes
 - Tests run in ~6 seconds; CI uses Node 22 (matches `.nvmrc`).

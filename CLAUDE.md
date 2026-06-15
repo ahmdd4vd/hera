@@ -56,7 +56,7 @@ The full SKILL.md is large (~2412 lines). For focused reading, use these extract
 
 1. Run `npm run test:run` to verify (if applicable)
 2. Update this CLAUDE.md if structure changes
-3. Validate with `npx hera-agent validate` or `hera validate`
+3. Validate with `npx hera-skill validate` or `hera validate`
 
 ### Key Invariants
 

@@ -583,7 +583,7 @@ describe("bin/hera.cjs CLI behavior", () => {
 
   it("unknown agent shows error and suggests list command", () => {
     const r = runHera(["nonexistent-agent"]);
-    expect(r.stdout + r.stderr).toMatch(/Unknown agent|npx hera-agent list/);
+    expect(r.stdout + r.stderr).toMatch(/Unknown agent|npx hera-skill list/);
   });
 
   it("graph subcommand is recognized", () => {
@@ -652,7 +652,7 @@ describe("uninstall command", () => {
 
   it("uninstall with unknown agent shows error", () => {
     const r = runHera(["uninstall", "nonexistent"], { cwd: tmpDir });
-    expect(r.stdout + r.stderr).toMatch(/Unknown agent|npx hera-agent list/);
+    expect(r.stdout + r.stderr).toMatch(/Unknown agent|npx hera-skill list/);
   });
 
   it("uninstall for claude when CLAUDE.md does not exist shows skip message", () => {
